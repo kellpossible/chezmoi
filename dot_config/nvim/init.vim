@@ -484,3 +484,6 @@ if exists('g:fvim_loaded')
     FVimCursorSmoothMove v:true
     FVimCursorSmoothBlink v:true
 endif
+
+" Run chezmoi apply when saving dotfiles
+autocmd BufWritePost ~/.local/share/chezmoi/* ! chezmoi apply --source-path "%"
