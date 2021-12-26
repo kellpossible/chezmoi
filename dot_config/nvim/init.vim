@@ -151,6 +151,14 @@ set tabstop=4
 set list
 set listchars=tab:▸\ ,trail:· " Show things that I normally don't want
 
+" Set relative line numbers automatically depending on mode
+augroup numbertoggle
+  autocmd!
+  autocmd BufEnter,FocusGained,InsertLeave,WinEnter * if &nu && mode() != "i" | set rnu   | endif
+  autocmd BufLeave,FocusLost,InsertEnter,WinLeave   * if &nu                  | set nornu | endif
+augroup END
+
+
 " Reselect selection after indentation
 vnoremap < <gv
 vnoremap > >gv
