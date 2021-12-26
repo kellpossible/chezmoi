@@ -9,6 +9,7 @@
 
 alias ls='ls --color=auto'
 # alias ls='nnn'
+alias neovide='neovide --multigrid'
 
 
 # source /usr/share/git/completion/git-prompt.sh

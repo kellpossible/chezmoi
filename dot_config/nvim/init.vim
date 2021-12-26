@@ -467,9 +467,16 @@ set statusline+=\ %p%%
 set statusline+=\ %l:%c
 set statusline+=\ 
 
-" Neovide Config
+" neovide Config
 " set guifont=FiraCode\ Nerd\ Font\ Mono:h8
 set guifont=Mono:h8
+let g:neovide_window_position_animation_length = 0
+let g:neovide_window_floating_opacity = 1
+let g:neovide_window_floating_blur = 0
+let g:neovide_floating_blur = 0
+let g:neovide_floating_opacity = 1
+
+" Zoom In and Out
 nmap <c-=> :ZoomIn<CR>
 nmap <c--> :ZoomOut<CR>
 
