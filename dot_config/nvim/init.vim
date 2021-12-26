@@ -97,6 +97,8 @@ Plug 'ron-rs/ron.vim'
 " Markdown Preview
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install' }
 
+Plug 'mhartington/formatter.nvim'
+
 call plug#end()
 
 " Open urls, workaround because netrw isn't working...
@@ -195,6 +197,23 @@ tmap   <silent>   <F9>    <C-\><C-n>:FloatermNext<CR>
 nmap   <silent>   <F12>   :FloatermToggle<CR>
 tmap   <silent>   <F12>   <C-\><C-n>:FloatermToggle<CR>
 
+
+" Configure formatter
+lua << EOF
+  require("formatter").setup({
+    filetype = {
+      json = {
+        function()
+          return {
+            exe = "jq",
+            stdin = true
+          }
+        end
+      }
+    }
+  })
+EOF
+nnoremap <silent> <leader>F <cmd>:Format<CR>
 
 " Configure trouble
 lua << EOF
@@ -336,6 +355,19 @@ local opts = {
 
 require('rust-tools').setup(opts)
 
+require('lspconfig').yamlls.setup {
+  settings = {
+    yaml = {
+      schemas = {
+        ["https://json.schemastore.org/github-workflow.json"] = "/.github/workflows/*",
+        ["https://raw.githubusercontent.com/compose-spec/compose-spec/master/schema/compose-spec.json"] = "docker-compose.yml",
+        -- ["../path/relative/to/file.yml"] = "/.github/workflows/*"
+        -- ["/path/from/root/of/project"] = "/.github/workflows/*"
+      },
+    },
+  }
+}
+
 vim.api.nvim_command [[ hi def link LspReferenceText CursorLine ]]
 vim.api.nvim_command [[ hi def link LspReferenceWrite CursorLine ]]
 vim.api.nvim_command [[ hi def link LspReferenceRead CursorLine ]]
@@ -343,7 +375,7 @@ vim.api.nvim_command [[ hi def link LspReferenceRead CursorLine ]]
 require "lsp_signature".setup()
 EOF
 
-" Code navigation shortcuts
+" LSP Shortcuts
 " as found in :help lsp
 nnoremap <silent> <space>k     <cmd>lua vim.lsp.buf.hover()<CR>
 nnoremap <silent> <space>s <cmd>lua vim.lsp.buf.signature_help()<CR>
