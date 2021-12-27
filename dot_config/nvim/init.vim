@@ -13,11 +13,12 @@ Plug 'NoahTheDuke/vim-just'
 Plug 'neovim/nvim-lspconfig'
 Plug 'nvim-lua/lsp-status.nvim'
 
-" Monokai Theme with tresitter support
+" Themes
 Plug 'tanvirtin/monokai.nvim'
 Plug 'EdenEast/nightfox.nvim'
 Plug 'sainnhe/sonokai'
-
+Plug 'sainnhe/everforest'
+Plug 'folke/tokyonight.nvim', { 'branch': 'main' }
 
 " Autocompletion framework
 Plug 'hrsh7th/nvim-cmp'
@@ -43,6 +44,7 @@ Plug 'gbrlsnchs/telescope-lsp-handlers.nvim'
 Plug 'folke/todo-comments.nvim'
 Plug 'kyazdani42/nvim-web-devicons'
 Plug 'folke/trouble.nvim'
+Plug 'lewis6991/gitsigns.nvim'
 " Find and replace Global
 Plug 'nvim-pack/nvim-spectre'
 " Find and replace Local
@@ -54,8 +56,8 @@ Plug 'chrisbra/unicode.vim'
 
 " File Tree
 " Plug 'saviocmc/nvim-tree.lua', { 'branch': 'restore-feat/highlight-git-ignored-files' }
-Plug 'luukvbaal/nnn.nvim'
-" Plug 'kyazdani42/nvim-tree.lua'
+" Plug 'luukvbaal/nnn.nvim'
+Plug 'kyazdani42/nvim-tree.lua'
 " Plug 'skyuplam/broot.nvim'
 " Plug 'rbgrouleff/bclose.vim'
 
@@ -162,9 +164,6 @@ EOF
 
 " General Editor Settings
 syntax on
-set termguicolors
-" colorscheme monokai_pro
-colorscheme sonokai
 set mouse=a
 set number
 set expandtab
@@ -172,6 +171,23 @@ set shiftwidth=4
 set tabstop=4
 set list
 set listchars=tab:▸\ ,trail:· " Show things that I normally don't want
+set termguicolors
+
+" Color Schemes
+" colorscheme monokai_pro
+
+" tokyo night scheme
+" colorscheme tokyonight
+" let g:tokyonight_style = "night"
+
+" sonokai scheme
+colorscheme sonokai
+
+" everforest scheme
+" Designed to work well with redshift
+" set background=dark
+" let g:everforest_background = 'hard'
+" colorscheme everforest
 
 " Reselect selection after indentation
 vnoremap < <gv
@@ -192,38 +208,43 @@ let g:floaterm_height = 0.8
 set completeopt=menuone,noinsert,noselect
 
 " Configure nnn
-lua << EOF
-  require("nnn").setup()
-EOF
-
-" Configure nnn
-lua << EOF
-  require("nnn").setup({
-    explorer = {
-      cmd = "nnn -G",       -- command overrride (-F1 flag is implied, -a flag is invalid!)
-      width = 24,        -- width of the vertical split
-      side = "topleft",  -- or "botright", location of the explorer window
-      session = "",      -- or "global" / "local" / "shared"
-      tabs = true,       -- seperate nnn instance per tab
-    },
-    picker = {
-        cmd = "nnn -G",
-        session = "shared",
-    },
-    replace_netrw = "picker",
-    window_nav = "<C-l>"
-  })
-EOF
+" tnoremap <silent> <C-b> <cmd>NnnExplorer<CR>
+" nnoremap <silent> <C-B> <cmd>NnnExplorer %:p:h<CR>
+" lua << EOF
+"   require("nnn").setup({
+"     explorer = {
+"       cmd = "nnn -G",       -- command overrride (-F1 flag is implied, -a flag is invalid!)
+"       width = 24,        -- width of the vertical split
+"       side = "topleft",  -- or "botright", location of the explorer window
+"       session = "",      -- or "global" / "local" / "shared"
+"       tabs = true,       -- seperate nnn instance per tab
+"     },
+"     picker = {
+"         cmd = "nnn -G",
+"         session = "shared",
+"     },
+"     replace_netrw = "picker",
+"     window_nav = "<C-l>"
+"   })
+" EOF
 
 " Configure nvim-tree.lua
-" let g:nvim_tree_highlight_opened_files = 1 
-" lua << EOF
-"   require'nvim-tree'.setup {
-"     git = {
-"       ignore = false
-"     }
-"   }
-" EOF
+nnoremap <leader>ft <cmd>NvimTreeFindFile<cr>
+nnoremap <silent> <C-b> <cmd>NvimTreeToggle<cr>
+let g:nvim_tree_highlight_opened_files = 1
+let g:nvim_tree_git_hl = 1
+lua << EOF
+  require'nvim-tree'.setup {
+    git = {
+      ignore = false,
+      enable = true,
+    },
+    trash = {
+      cmd = "trash",
+      require_confirm = true,
+    }
+  }
+EOF
 
 " Floatterm Config
 nmap   <silent>   <F7>    :FloatermNew<CR>
@@ -235,6 +256,9 @@ tmap   <silent>   <F9>    <C-\><C-n>:FloatermNext<CR>
 nmap   <silent>   <F12>   :FloatermToggle<CR>
 tmap   <silent>   <F12>   <C-\><C-n>:FloatermToggle<CR>
 
+
+" Configure gitsigns
+lua require('gitsigns').setup()
 
 " Configure formatter
 lua << EOF
@@ -496,11 +520,6 @@ nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 nnoremap <leader>fc <cmd>Telescope commands<cr>
 
 nnoremap <silent> <space>m <cmd>MinimapToggle<cr>
-
-" nnoremap <leader>ft <cmd>NvimTreeFindFile<cr>
-" nnoremap <silent> <C-b> <cmd>NvimTreeToggle<cr>
-tnoremap <silent> <C-b> <cmd>NnnExplorer<CR>
-nnoremap <silent> <C-B> <cmd>NnnExplorer %:p:h<CR>
 
 nnoremap <silent> <space>S <cmd>GitGutterStageHunk<cr>
 nnoremap <silent> <space>U <cmd>GitGutterUndoHunk<cr>
