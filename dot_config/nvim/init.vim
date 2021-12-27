@@ -97,7 +97,15 @@ Plug 'ron-rs/ron.vim'
 " Markdown Preview
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install' }
 
+" Code formatting without lsp
 Plug 'mhartington/formatter.nvim'
+
+" Zen Modes
+Plug 'folke/zen-mode.nvim'
+Plug 'Pocco81/TrueZen.nvim'
+
+" Hop easy motion
+Plug 'phaazon/hop.nvim'
 
 call plug#end()
 
@@ -124,10 +132,13 @@ lua require('Comment').setup()
 " Configure neogit
 lua require('neogit').setup()
 
+" Configure Zen modes
+lua require('zen-mode').setup()
+lua require('true-zen').setup()
 
 " Tree Sitter Configuration
 lua << EOF
-require'nvim-treesitter.configs'.setup {
+require('nvim-treesitter.configs').setup {
   highlight = {
     enable = true,
     -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
@@ -154,11 +165,11 @@ set list
 set listchars=tab:▸\ ,trail:· " Show things that I normally don't want
 
 " Set relative line numbers automatically depending on mode
-augroup numbertoggle
-  autocmd!
-  autocmd BufEnter,FocusGained,InsertLeave,WinEnter * if &nu && mode() != "i" | set rnu   | endif
-  autocmd BufLeave,FocusLost,InsertEnter,WinLeave   * if &nu                  | set nornu | endif
-augroup END
+" augroup numbertoggle
+"   autocmd!
+"   autocmd BufEnter,FocusGained,InsertLeave,WinEnter * if &nu && mode() != "i" | set rnu   | endif
+"   autocmd BufLeave,FocusLost,InsertEnter,WinLeave   * if &nu                  | set nornu | endif
+" augroup END
 
 
 " Reselect selection after indentation
@@ -473,6 +484,31 @@ nnoremap <silent> <A-l> :MoveHChar(1)<CR>
 nnoremap <silent> <A-h> :MoveHChar(-1)<CR>
 vnoremap <silent> <A-l> :MoveHBlock(1)<CR>
 vnoremap <silent> <A-h> :MoveHBlock(-1)<CR>
+
+" No Highlight
+nnoremap <silent> <space>n <cmd>noh<cr>
+
+" Hop Configuration
+lua << EOF
+require('hop').setup { 
+  keys = 'etovxqpdygfblzhckisuran',
+  jump_on_sole_occurrence = false,
+}
+vim.api.nvim_set_keymap('n', 'f', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.AFTER_CURSOR, current_line_only = true })<cr>", {})
+vim.api.nvim_set_keymap('n', 'F', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.BEFORE_CURSOR, current_line_only = true })<cr>", {})
+vim.api.nvim_set_keymap('o', 'f', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.AFTER_CURSOR, current_line_only = true, inclusive_jump = true })<cr>", {})
+vim.api.nvim_set_keymap('o', 'F', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.BEFORE_CURSOR, current_line_only = true, inclusive_jump = true })<cr>", {})
+vim.api.nvim_set_keymap('', 't', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.AFTER_CURSOR, current_line_only = true })<cr>", {})
+vim.api.nvim_set_keymap('', 'T', "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.BEFORE_CURSOR, current_line_only = true })<cr>", {})
+EOF
+nnoremap <silent> <space>/ <cmd>HopPattern<cr>
+vnoremap <silent> <space>/ <cmd>HopPattern<cr>
+nnoremap <silent> <space>j <cmd>HopWord<cr>
+vnoremap <silent> <space>j <cmd>HopWord<cr>
+nnoremap <silent> <space>l <cmd>HopLineStart<cr>
+vnoremap <silent> <space>l <cmd>HopLineStart<cr>
+nnoremap <silent> <space>L <cmd>HopLine<cr>
+vnoremap <silent> <space>L <cmd>HopLine<cr>
 
 " " Copy to clipboard
 vnoremap  <leader>y  "+y

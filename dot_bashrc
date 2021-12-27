@@ -7,9 +7,12 @@
 
 # eval $(keychain --eval --quiet id_ed25519)
 
-alias ls='ls --color=auto'
+# alias ls='ls --color=auto'
+alias ls='exa'
 # alias ls='nnn'
 alias neovide='neovide --multigrid'
+alias find='fd'
+alias cat='bat'
 
 
 # source /usr/share/git/completion/git-prompt.sh
