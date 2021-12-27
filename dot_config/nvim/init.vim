@@ -15,6 +15,9 @@ Plug 'nvim-lua/lsp-status.nvim'
 
 " Monokai Theme with tresitter support
 Plug 'tanvirtin/monokai.nvim'
+Plug 'EdenEast/nightfox.nvim'
+Plug 'sainnhe/sonokai'
+
 
 " Autocompletion framework
 Plug 'hrsh7th/nvim-cmp'
@@ -50,7 +53,11 @@ Plug 'folke/which-key.nvim'
 Plug 'chrisbra/unicode.vim'
 
 " File Tree
-Plug 'kyazdani42/nvim-tree.lua'
+" Plug 'saviocmc/nvim-tree.lua', { 'branch': 'restore-feat/highlight-git-ignored-files' }
+Plug 'luukvbaal/nnn.nvim'
+" Plug 'kyazdani42/nvim-tree.lua'
+" Plug 'skyuplam/broot.nvim'
+" Plug 'rbgrouleff/bclose.vim'
 
 " Visual Multi Selection
 Plug 'mg979/vim-visual-multi'
@@ -155,7 +162,9 @@ EOF
 
 " General Editor Settings
 syntax on
-colorscheme monokai_pro
+set termguicolors
+" colorscheme monokai_pro
+colorscheme sonokai
 set mouse=a
 set number
 set expandtab
@@ -163,14 +172,6 @@ set shiftwidth=4
 set tabstop=4
 set list
 set listchars=tab:▸\ ,trail:· " Show things that I normally don't want
-
-" Set relative line numbers automatically depending on mode
-" augroup numbertoggle
-"   autocmd!
-"   autocmd BufEnter,FocusGained,InsertLeave,WinEnter * if &nu && mode() != "i" | set rnu   | endif
-"   autocmd BufLeave,FocusLost,InsertEnter,WinLeave   * if &nu                  | set nornu | endif
-" augroup END
-
 
 " Reselect selection after indentation
 vnoremap < <gv
@@ -190,13 +191,39 @@ let g:floaterm_height = 0.8
 " noselect: Do not select, force user to select one from the menu
 set completeopt=menuone,noinsert,noselect
 
-" Configure nvim-tree.lua
-let g:nvim_tree_highlight_opened_files = 1 
+" Configure nnn
 lua << EOF
- -- following options are the default
--- each of these are documented in `:help nvim-tree.OPTION_NAME`
-require'nvim-tree'.setup()
+  require("nnn").setup()
 EOF
+
+" Configure nnn
+lua << EOF
+  require("nnn").setup({
+    explorer = {
+      cmd = "nnn -G",       -- command overrride (-F1 flag is implied, -a flag is invalid!)
+      width = 24,        -- width of the vertical split
+      side = "topleft",  -- or "botright", location of the explorer window
+      session = "",      -- or "global" / "local" / "shared"
+      tabs = true,       -- seperate nnn instance per tab
+    },
+    picker = {
+        cmd = "nnn -G",
+        session = "shared",
+    },
+    replace_netrw = "picker",
+    window_nav = "<C-l>"
+  })
+EOF
+
+" Configure nvim-tree.lua
+" let g:nvim_tree_highlight_opened_files = 1 
+" lua << EOF
+"   require'nvim-tree'.setup {
+"     git = {
+"       ignore = false
+"     }
+"   }
+" EOF
 
 " Floatterm Config
 nmap   <silent>   <F7>    :FloatermNew<CR>
@@ -470,8 +497,10 @@ nnoremap <leader>fc <cmd>Telescope commands<cr>
 
 nnoremap <silent> <space>m <cmd>MinimapToggle<cr>
 
-nnoremap <leader>ft <cmd>NvimTreeFindFile<cr>
-nnoremap <silent> <C-b> <cmd>NvimTreeToggle<cr>
+" nnoremap <leader>ft <cmd>NvimTreeFindFile<cr>
+" nnoremap <silent> <C-b> <cmd>NvimTreeToggle<cr>
+tnoremap <silent> <C-b> <cmd>NnnExplorer<CR>
+nnoremap <silent> <C-B> <cmd>NnnExplorer %:p:h<CR>
 
 nnoremap <silent> <space>S <cmd>GitGutterStageHunk<cr>
 nnoremap <silent> <space>U <cmd>GitGutterUndoHunk<cr>
@@ -510,19 +539,24 @@ vnoremap <silent> <space>l <cmd>HopLineStart<cr>
 nnoremap <silent> <space>L <cmd>HopLine<cr>
 vnoremap <silent> <space>L <cmd>HopLine<cr>
 
-" " Copy to clipboard
+" Copy to clipboard
 vnoremap  <leader>y  "+y
 nnoremap  <leader>Y  "+yg_
 nnoremap  <leader>y  "+y
 nnoremap  <leader>yy  "+yy
 
-" " Paste from clipboard
+" Paste from clipboard
 nnoremap <leader>p "+p
 nnoremap <leader>P "+P
 vnoremap <leader>p "+p
 vnoremap <leader>P "+P
 
-"
+" Highlight when yanking
+augroup highlight_yank
+    autocmd!
+    au TextYankPost * silent! lua vim.highlight.on_yank{higroup="IncSearch", timeout=700}
+augroup END
+
 " Statusline
 function! LspStatus() abort
   if luaeval('#vim.lsp.buf_get_clients() > 0')
