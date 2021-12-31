@@ -307,6 +307,7 @@ tmap   <silent>   <F12>   <C-\><C-n>:FloatermToggle<CR>
 
 " Configure gitsigns
 lua require('gitsigns').setup()
+nnoremap <silent> <space>h <cmd>Gitsigns preview_hunk<CR>
 
 " Configure formatter
 lua << EOF
