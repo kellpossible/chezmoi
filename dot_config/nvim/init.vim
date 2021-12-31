@@ -40,6 +40,7 @@ Plug 'simrat39/rust-tools.nvim'
 Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
+Plug 'nvim-telescope/telescope-file-browser.nvim'
 Plug 'gbrlsnchs/telescope-lsp-handlers.nvim'
 Plug 'folke/todo-comments.nvim'
 Plug 'kyazdani42/nvim-web-devicons'
@@ -116,10 +117,22 @@ Plug 'Pocco81/TrueZen.nvim'
 " Hop easy motion
 Plug 'phaazon/hop.nvim'
 
+" Marks
+Plug 'chentau/marks.nvim'
+
 call plug#end()
 
 " Open urls, workaround because netrw isn't working...
 nmap gx yiW:!xdg-open <cWORD><CR> <C-r>" & <CR><CR>
+
+augroup pscbindings
+  " Required to re-source this script.
+  autocmd! pscbindings
+  " Use regular movement keys for soft wrapped lines.
+  " source: https://stackoverflow.com/a/21000307/446250
+  autocmd Filetype purescript nnoremap <expr> k (v:count == 0 ? 'gk' : 'k')
+  autocmd Filetype purescript nnoremap <expr> j (v:count == 0 ? 'gj' : 'j')
+augroup end
 
 " system clipboard
 nmap <c-c> "+y
@@ -138,6 +151,41 @@ let g:minimap_git_colors = 1
 " Configure comment
 lua require('Comment').setup()
 
+" Configure marks
+lua << EOF
+  require('marks').setup { 
+    -- whether to map keybinds or not. default true
+    default_mappings = true,
+    -- which builtin marks to show. default {}
+    -- builtin_marks = { ".", "<", ">", "^" },
+    builtin_marks = {},
+    -- whether movements cycle back to the beginning/end of buffer. default true
+    cyclic = true,
+    -- whether the shada file is updated after modifying uppercase marks. default false
+    force_write_shada = false,
+    -- how often (in ms) to redraw signs/recompute mark positions. 
+    -- higher values will have better performance but may cause visual lag, 
+    -- while lower values may cause performance penalties. default 150.
+    refresh_interval = 250,
+    -- sign priorities for each type of mark - builtin marks, uppercase marks, lowercase
+    -- marks, and bookmarks.
+    -- can be either a table with all/none of the keys, or a single number, in which case
+    -- the priority applies to all marks.
+    -- default 10.
+    sign_priority = { lower=10, upper=15, builtin=8, bookmark=20 },
+    -- disables mark tracking for specific filetypes. default {}
+    excluded_filetypes = {},
+    -- marks.nvim allows you to configure up to 10 bookmark groups, each with its own
+    -- sign/virttext. Bookmarks can be used to group together positions and quickly move
+    -- across multiple buffers. default sign is '!@#$%^&*()' (from 0 to 9), and
+    -- default virt_text is "".
+    -- bookmark_0 = {
+    --  sign = "⚑",
+    --  virt_text = "hello world"
+    --},
+    mappings = {}
+  }
+EOF
 " Configure neogit
 lua require('neogit').setup()
 
@@ -312,6 +360,9 @@ EOF
 
 " Configure Telescope
 lua << EOF
+  local action_state = require("telescope.actions.state")
+  local actions = require("telescope.actions")
+  local fb_actions = require("telescope._extensions.file_browser.actions")
   local telescope = require("telescope")
   telescope.load_extension("lsp_handlers")
   telescope.setup{
@@ -336,6 +387,41 @@ lua << EOF
     -- }
     -- Now the picker_config_key will be applied every time you call this
     -- builtin picker
+    -- https://gitter.im/nvim-telescope/community?at=6113b874025d436054c468e6 Fabian David Schmidt
+    find_files = {
+      on_input_filter_cb = function(prompt)
+        local find_colon = string.find(prompt, ":")
+        if find_colon then
+          local ret = string.sub(prompt, 1, find_colon - 1)
+          vim.schedule(function()
+            local prompt_bufnr = vim.api.nvim_get_current_buf()
+            local picker = action_state.get_current_picker(prompt_bufnr)
+            local lnum = tonumber(prompt:sub(find_colon + 1))
+            if type(lnum) == "number" then
+              local win = picker.previewer.state.winid
+              local bufnr = picker.previewer.state.bufnr
+              local line_count = vim.api.nvim_buf_line_count(bufnr)
+              vim.api.nvim_win_set_cursor(win, { math.max(1, math.min(lnum, line_count)), 0 })
+            end
+          end)
+          return { prompt = ret }
+        end
+      end,
+      attach_mappings = function()
+        actions.select_default:enhance({
+          post = function()
+            -- if we found something, go to line
+            local prompt = action_state.get_current_line()
+            local find_colon = string.find(prompt, ":")
+            if find_colon then
+              local lnum = tonumber(prompt:sub(find_colon + 1))
+              vim.api.nvim_win_set_cursor(0, { lnum, 0 })
+            end
+          end,
+        })
+        return true
+      end,
+    },
   },
   extensions = {
     -- Your extension configuration goes here:
@@ -584,7 +670,6 @@ function! LspStatus() abort
 
   return ''
 endfunction
-    
 
 set statusline=
 set statusline+=\ %f
