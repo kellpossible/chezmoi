@@ -82,10 +82,10 @@ Plug 'TimUntersberger/neogit'
 Plug 'drzel/vim-gui-zoom'
 
 " Code action menu
-" Plug 'weilbith/nvim-code-action-menu'
+Plug 'weilbith/nvim-code-action-menu'
 " TODO waiting for PR:
 " https://github.com/weilbith/nvim-code-action-menu/pull/34
-Plug 'filtsin/nvim-code-action-menu'
+" Plug 'filtsin/nvim-code-action-menu'
 
 " Action lightbulb
 " Plug 'kosayoda/nvim-lightbulb'
@@ -94,6 +94,9 @@ Plug 'ray-x/lsp_signature.nvim'
 
 " Matching closing brackets
 Plug 'windwp/nvim-autopairs'
+
+" Highlight matching parenthesis/brackets
+Plug 'monkoose/matchparen.nvim'
 
 " Floating Terminal
 Plug 'voldikss/vim-floaterm'
@@ -124,6 +127,9 @@ Plug 'chentau/marks.nvim'
 Plug 'nvim-orgmode/orgmode'
 Plug 'nvim-neorg/neorg'
 
+"Clipboard neoclip
+Plug 'AckslD/nvim-neoclip.lua'
+
 call plug#end()
 
 " Open urls, workaround because netrw isn't working...
@@ -146,6 +152,11 @@ inoremap <c-v> <c-r>+
 cnoremap <c-v> <c-r>+
 " use <c-r> to insert original character without triggering things like auto-pairs
 inoremap <c-r> <c-v>
+
+" Configure matchparen
+" Disable default matchparen
+let g:loaded_matchparen = 1
+lua require('matchparen').setup()
 
 " Configure minimap
 let g:minimap_auto_start = 0
@@ -194,7 +205,13 @@ EOF
 lua require('neogit').setup()
 
 " Configure Zen modes
-lua require('zen-mode').setup()
+lua << EOF
+  require('zen-mode').setup {
+    window = {
+      width = .85
+    }
+  }
+EOF
 lua require('true-zen').setup()
 
 " Tree Sitter Configuration
@@ -224,6 +241,10 @@ require('nvim-treesitter.configs').setup {
   }
 }
 EOF
+" Use treesitter folding
+set foldmethod=expr
+set foldexpr=nvim_treesitter#foldexpr()
+set foldlevelstart=99 " Ensure everything is unfolded by default
 
 " General Editor Settings
 syntax on
@@ -262,6 +283,7 @@ map gf :edit <cfile><cr>
 " Floaterm Configuration
 let g:floaterm_width = 0.8
 let g:floaterm_height = 0.8
+let g:floaterm_opener = 'edit'
 
 " Set completeopt to have a better completion experience
 " :help completeopt
@@ -324,6 +346,13 @@ tmap   <silent>   <F12>   <C-\><C-n>:FloatermToggle<CR>
 lua require('gitsigns').setup()
 nnoremap <silent> <space>h <cmd>Gitsigns preview_hunk<CR>
 
+" Configure indent-blankline
+lua << EOF
+  require("indent_blankline").setup {
+    show_current_context = true,
+    show_current_context_start = false,
+  }
+EOF
 " Configure formatter
 lua << EOF
   require("formatter").setup({
@@ -384,6 +413,7 @@ lua << EOF
   local fb_actions = require("telescope._extensions.file_browser.actions")
   local telescope = require("telescope")
   telescope.load_extension("lsp_handlers")
+  telescope.load_extension("neoclip")
   telescope.setup{
   defaults = {
     path_display = {"smart"},
@@ -599,6 +629,10 @@ cmp.setup({
 })
 EOF
 
+"Setup neoclip
+lua require('neoclip').setup()
+nnoremap <silent> <space>v <cmd>Telescope neoclip<cr>
+vnoremap <silent> <space>v <cmd>Telescope neoclip<cr>
 
 " have a fixed column for the diagnostics to appear in
 " this removes the jitter when warnings/errors flow in
