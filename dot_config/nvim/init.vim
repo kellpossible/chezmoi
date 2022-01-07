@@ -208,7 +208,7 @@ lua require('neogit').setup()
 lua << EOF
   require('zen-mode').setup {
     window = {
-      width = .85
+      width = 140
     }
   }
 EOF
@@ -256,6 +256,22 @@ set tabstop=4
 set list
 set listchars=tab:▸\ ,trail:· " Show things that I normally don't want
 set termguicolors
+
+" Title
+set title
+function SetTitleString()
+    let &titlestring="NVIM" . " - " . fnamemodify(getcwd(), ':t') . " - " . expand("%:t")
+endfunction
+
+call SetTitleString()
+augroup dirchange
+    autocmd!
+    autocmd DirChanged * call SetTitleString()
+augroup END
+augroup bufenter
+    autocmd!
+    autocmd BufEnter * call SetTitleString()
+augroup END
 
 " Color Schemes
 " colorscheme monokai_pro

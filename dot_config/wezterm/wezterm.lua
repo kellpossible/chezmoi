@@ -1,6 +1,7 @@
 local wezterm = require 'wezterm';
 
 return {
+  enable_tab_bar = false,
   window_padding = {
     left = 0,
     right = 0,
