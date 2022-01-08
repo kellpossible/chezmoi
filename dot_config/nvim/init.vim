@@ -257,21 +257,22 @@ set list
 set listchars=tab:▸\ ,trail:· " Show things that I normally don't want
 set termguicolors
 
-" Title
-set title
+" Window Title
 function SetTitleString()
     let &titlestring="NVIM" . " - " . fnamemodify(getcwd(), ':t') . " - " . expand("%:t")
 endfunction
-
-call SetTitleString()
-augroup dirchange
-    autocmd!
-    autocmd DirChanged * call SetTitleString()
-augroup END
-augroup bufenter
-    autocmd!
-    autocmd BufEnter * call SetTitleString()
-augroup END
+if exists('g:neovide')
+    set title
+    call SetTitleString()
+    augroup dirchange
+        autocmd!
+        autocmd DirChanged * call SetTitleString()
+    augroup END
+    augroup bufenter
+        autocmd!
+        autocmd BufEnter * call SetTitleString()
+    augroup END
+endif
 
 " Color Schemes
 " colorscheme monokai_pro
