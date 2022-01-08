@@ -433,6 +433,10 @@ lua << EOF
   telescope.load_extension("neoclip")
   telescope.setup{
   defaults = {
+    layout_strategy = "horizontal",
+    layout_config = {
+      height = 0.5,
+    },
     path_display = {"smart"},
     -- Default configuration for telescope goes here:
     -- config_key = value,
@@ -454,6 +458,16 @@ lua << EOF
     -- Now the picker_config_key will be applied every time you call this
     -- builtin picker
     -- https://gitter.im/nvim-telescope/community?at=6113b874025d436054c468e6 Fabian David Schmidt
+    buffers = {
+        mappings = {
+          n = {
+            ["<C-d>"] = actions.delete_buffer,
+          },
+          i = {
+            ["<C-d>"] = actions.delete_buffer,
+          }
+        },
+    },
     find_files = {
       on_input_filter_cb = function(prompt)
         local find_colon = string.find(prompt, ":")
