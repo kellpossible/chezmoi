@@ -433,12 +433,14 @@ lua << EOF
   telescope.load_extension("neoclip")
   telescope.setup{
   defaults = {
+    -- Default configuration for telescope goes here:
     layout_strategy = "horizontal",
     layout_config = {
       height = 0.5,
     },
-    path_display = {"smart"},
-    -- Default configuration for telescope goes here:
+    path_display = {
+      truncate = 15,
+    },
     -- config_key = value,
     mappings = {
       i = {
