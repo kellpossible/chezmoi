@@ -1,6 +1,13 @@
 local wezterm = require 'wezterm';
 
 return {
+  hyperlink_rules = {
+    -- Linkify things that look like URLs
+    {
+      regex = [[\b\w+://(?:[\w.-]+)\.[a-z0-9]{1,15}\S*\b]],
+      format = "$0",
+    },
+  },
   enable_tab_bar = false,
   window_padding = {
     left = 0,
