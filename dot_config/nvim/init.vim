@@ -3,6 +3,10 @@
 
 call plug#begin()
 
+" Utility Libraries
+Plug 'nvim-lua/popup.nvim'
+Plug 'nvim-lua/plenary.nvim'
+
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " We recommend updating the parsers on update
 Plug 'romgrk/nvim-treesitter-context'
 
@@ -36,9 +40,8 @@ Plug 'hrsh7th/vim-vsnip'
 
 " Adds extra functionality over rust analyzer
 Plug 'simrat39/rust-tools.nvim'
+Plug 'Saecki/crates.nvim'
 
-Plug 'nvim-lua/popup.nvim'
-Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-file-browser.nvim'
 Plug 'gbrlsnchs/telescope-lsp-handlers.nvim'
@@ -256,6 +259,11 @@ set tabstop=4
 set list
 set listchars=tab:▸\ ,trail:· " Show things that I normally don't want
 set termguicolors
+ " trigger `autoread` when files changes on disk
+set autoread
+" autocmd FocusGained,BufEnter,CursorHold,CursorHoldI * if mode() != 'c' | checktime | endif
+" notification after file change
+" autocmd FileChangedShellPost * echohl WarningMsg | echo "File changed on disk. Buffer reloaded." | echohl None
 
 " Window Title
 function SetTitleString()
@@ -525,6 +533,9 @@ let g:Illuminate_delay = 300
 " LSP Highlight
 " autocmd CursorHold,CursorHoldI * lua vim.lsp.buf.document_highlight()
 
+" Configure rust cargo crates
+lua require('crates').setup()
+
 " Configure LSP through rust-tools.nvim plugin.
 " rust-tools will configure and enable certain LSP features for us.
 " See https://github.com/simrat39/rust-tools.nvim#configuration
@@ -544,6 +555,10 @@ local lspconfig = require('lspconfig')
 -- Python LSP
 -- lspconfig.pylsp.setup{}
 lspconfig.pyright.setup{}
+
+-- https://github.com/hrsh7th/cmp-nvim-lsp#setup
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
 
 -- Rust Setup
 local opts = {
@@ -578,8 +593,14 @@ local opts = {
                 checkOnSave = {
                     command = "clippy"
                 },
+                procMacro = {
+                    ignored = {
+                        ["async-trait"] = "async_trait"
+                    }
+                },
             }
-        }
+        },
+        capabilities = capabilities,
     },
 }
 
@@ -644,7 +665,7 @@ cmp.setup({
     ['<Tab>'] = cmp.mapping.select_next_item(),
     ['<C-d>'] = cmp.mapping.scroll_docs(-4),
     ['<C-f>'] = cmp.mapping.scroll_docs(4),
-    ['<C-Space>'] = cmp.mapping.complete(),
+    ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
     ['<C-e>'] = cmp.mapping.close(),
     ['<CR>'] = cmp.mapping.confirm({
       behavior = cmp.ConfirmBehavior.Insert,
@@ -658,8 +679,25 @@ cmp.setup({
     { name = 'vsnip' },
     { name = 'path' },
     { name = 'buffer' },
+    { name = 'crates' },
   },
 })
+
+-- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
+-- cmp.setup.cmdline('/', {
+--   sources = {
+--     { name = 'buffer' }
+--   }
+-- })
+
+-- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+-- cmp.setup.cmdline(':', {
+--   sources = cmp.config.sources({
+--     { name = 'path' }
+--   }, {
+--     { name = 'cmdline' }
+--   })
+-- })
 EOF
 
 "Setup neoclip
