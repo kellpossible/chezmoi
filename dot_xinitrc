@@ -10,4 +10,5 @@ redshift-gtk &
 #export SSH_AUTH_SOCK
 eval $(ssh-agent)
 exec i3
+
 # sudo /usr/bin/prime-switch

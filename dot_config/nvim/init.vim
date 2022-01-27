@@ -10,12 +10,14 @@ Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " We recommend updating the parsers on update
 Plug 'romgrk/nvim-treesitter-context'
 
-" Plug 'vmchale/just-vim'
 Plug 'NoahTheDuke/vim-just'
 
 " Collection of common configurations for the Nvim LSP client
 Plug 'neovim/nvim-lspconfig'
 Plug 'nvim-lua/lsp-status.nvim'
+
+" LSP Symbols Outline
+" Plug 'simrat39/symbols-outline.nvim'
 
 " Themes
 Plug 'tanvirtin/monokai.nvim'
@@ -45,6 +47,9 @@ Plug 'Saecki/crates.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-file-browser.nvim'
 Plug 'gbrlsnchs/telescope-lsp-handlers.nvim'
+
+Plug 'glepnir/dashboard-nvim'
+
 Plug 'folke/todo-comments.nvim'
 Plug 'kyazdani42/nvim-web-devicons'
 Plug 'folke/trouble.nvim'
@@ -138,14 +143,10 @@ call plug#end()
 " Open urls, workaround because netrw isn't working...
 nmap gx yiW:!xdg-open <cWORD><CR> <C-r>" & <CR><CR>
 
-augroup pscbindings
-  " Required to re-source this script.
-  autocmd! pscbindings
-  " Use regular movement keys for soft wrapped lines.
-  " source: https://stackoverflow.com/a/21000307/446250
-  autocmd Filetype purescript nnoremap <expr> k (v:count == 0 ? 'gk' : 'k')
-  autocmd Filetype purescript nnoremap <expr> j (v:count == 0 ? 'gj' : 'j')
-augroup end
+" Use regular movement keys for soft wrapped lines.
+" source: https://stackoverflow.com/a/21000307/446250
+nnoremap <expr> k (v:count == 0 ? 'gk' : 'k')
+nnoremap <expr> j (v:count == 0 ? 'gj' : 'j')
 
 " system clipboard
 nmap <c-c> "+y
@@ -165,6 +166,17 @@ lua require('matchparen').setup()
 let g:minimap_auto_start = 0
 let g:minimap_highlight_search = 1
 let g:minimap_git_colors = 1
+
+" Configure dashboard
+let g:dashboard_default_executive = "telescope"
+let g:dashboard_custom_header = [
+\ ' ███╗   ██╗ ███████╗ ██████╗  ██╗   ██╗ ██╗ ███╗   ███╗',
+\ ' ████╗  ██║ ██╔════╝██╔═══██╗ ██║   ██║ ██║ ████╗ ████║',
+\ ' ██╔██╗ ██║ █████╗  ██║   ██║ ██║   ██║ ██║ ██╔████╔██║',
+\ ' ██║╚██╗██║ ██╔══╝  ██║   ██║ ╚██╗ ██╔╝ ██║ ██║╚██╔╝██║',
+\ ' ██║ ╚████║ ███████╗╚██████╔╝  ╚████╔╝  ██║ ██║ ╚═╝ ██║',
+\ ' ╚═╝  ╚═══╝ ╚══════╝ ╚═════╝    ╚═══╝   ╚═╝ ╚═╝     ╚═╝',
+\]
 
 " Configure comment
 lua require('Comment').setup()
@@ -376,6 +388,7 @@ lua << EOF
   require("indent_blankline").setup {
     show_current_context = true,
     show_current_context_start = false,
+    filetype_exclude = { "dashboard" },
   }
 EOF
 " Configure formatter
@@ -547,6 +560,8 @@ lsp_status.register_progress()
 
 local lspconfig = require('lspconfig')
 
+lspconfig.texlab.setup{}
+
 -- lspconfig.rust_analyzer.setup({
 --   on_attach = lsp_status.on_attach,
 --   capabilities = lsp_status.capabilities
@@ -594,9 +609,9 @@ local opts = {
                     command = "clippy"
                 },
                 procMacro = {
-                    ignored = {
-                        ["async-trait"] = "async_trait"
-                    }
+                    -- ignored = {
+                    --     ["async-trait"] = "async_trait"
+                    -- }
                 },
             }
         },
@@ -646,6 +661,9 @@ nnoremap <silent> <space>r <cmd>lua vim.lsp.buf.rename()<CR>
 
 nnoremap <silent> <space>g <cmd>Neogit<cr>
 nnoremap <silent> <space>G <cmd>terminal gitui<cr>
+
+" Spelling
+nnoremap <silent> <space>p <cmd>Telescope spell_suggest<cr>
 
 " Setup Completion
 " See https://github.com/hrsh7th/nvim-cmp#basic-configuration
@@ -698,7 +716,27 @@ cmp.setup({
 --     { name = 'cmdline' }
 --   })
 -- })
+
+function setAutoCmp(mode)
+  if mode then
+    cmp.setup({
+      completion = {
+        autocomplete = { require('cmp.types').cmp.TriggerEvent.TextChanged }
+      }
+    })
+  else
+    cmp.setup({
+      completion = {
+        autocomplete = false
+      }
+    })
+  end
+end
 EOF
+
+nnoremap <silent> <space>c <cmd>lua setAutoCmp(true)<cr>
+nnoremap <silent> <space>C <cmd>lua setAutoCmp(false)<cr>
+
 
 "Setup neoclip
 lua require('neoclip').setup()
@@ -763,10 +801,10 @@ nnoremap <silent> <space>/ <cmd>HopPattern<cr>
 vnoremap <silent> <space>/ <cmd>HopPattern<cr>
 nnoremap <silent> <space>j <cmd>HopWord<cr>
 vnoremap <silent> <space>j <cmd>HopWord<cr>
-nnoremap <silent> <space>l <cmd>HopLineStart<cr>
-vnoremap <silent> <space>l <cmd>HopLineStart<cr>
-nnoremap <silent> <space>L <cmd>HopLine<cr>
-vnoremap <silent> <space>L <cmd>HopLine<cr>
+nnoremap <silent> <space>L <cmd>HopLineStart<cr>
+vnoremap <silent> <space>L <cmd>HopLineStart<cr>
+nnoremap <silent> <space>l <cmd>HopLine<cr>
+vnoremap <silent> <space>l <cmd>HopLine<cr>
 
 " Copy to clipboard
 vnoremap  <leader>y  "+y
@@ -822,7 +860,6 @@ nmap <c--> :ZoomOut<CR>
 map <ScrollWheelUp> <C-Y>
 " nmap <S-ScrollWheelUp> <C-U>
 map <ScrollWheelDown> <C-E>
-" nmap <S-ScrollWheelDown> <C-D>
 
 " fvim settings
 if exists('g:fvim_loaded')
