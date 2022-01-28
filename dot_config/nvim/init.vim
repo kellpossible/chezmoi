@@ -490,6 +490,7 @@ lua << EOF
             ["<C-d>"] = actions.delete_buffer,
           }
         },
+        sort_lastused = true,
     },
     find_files = {
       on_input_filter_cb = function(prompt)
