@@ -15,6 +15,7 @@ Plug 'NoahTheDuke/vim-just'
 " Collection of common configurations for the Nvim LSP client
 Plug 'neovim/nvim-lspconfig'
 Plug 'nvim-lua/lsp-status.nvim'
+Plug 'stevearc/dressing.nvim'
 
 " LSP Symbols Outline
 " Plug 'simrat39/symbols-outline.nvim'
@@ -91,14 +92,13 @@ Plug 'drzel/vim-gui-zoom'
 
 " Code action menu
 Plug 'weilbith/nvim-code-action-menu'
-" TODO waiting for PR:
-" https://github.com/weilbith/nvim-code-action-menu/pull/34
-" Plug 'filtsin/nvim-code-action-menu'
 
 " Action lightbulb
 " Plug 'kosayoda/nvim-lightbulb'
 
 Plug 'ray-x/lsp_signature.nvim'
+
+Plug 'onsails/lspkind-nvim'
 
 " Matching closing brackets
 Plug 'windwp/nvim-autopairs'
@@ -655,9 +655,9 @@ nnoremap <silent> gW    <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
 nnoremap <silent> gs    <cmd>Telescope lsp_dynamic_workspace_symbols<CR>
 nnoremap <silent> gd    <cmd>lua vim.lsp.buf.definition()<CR>
 nnoremap <silent> <space>F    <cmd>lua vim.lsp.buf.formatting()<CR>
-" Quick-fix
-" nnoremap <silent> <space>a    <cmd>lua vim.sp.buf.code_action()<CR>
-nnoremap <silent> <space>a    <cmd>CodeActionMenu<CR>
+nnoremap <silent> <space>a    <cmd>Telescope lsp_code_actions<CR>
+" nnoremap <silent> <space>a    <cmd>lua vim.lsp.buf.code_action()<CR>
+" nnoremap <silent> <space>a    <cmd>CodeActionMenu<CR>
 nnoremap <silent> <space>r <cmd>lua vim.lsp.buf.rename()<CR>
 
 nnoremap <silent> <space>g <cmd>Neogit<cr>
@@ -670,6 +670,7 @@ nnoremap <silent> <space>p <cmd>Telescope spell_suggest<cr>
 " See https://github.com/hrsh7th/nvim-cmp#basic-configuration
 lua <<EOF
 local cmp = require'cmp'
+local lspkind = require('lspkind')
 cmp.setup({
   snippet = {
     expand = function(args)
@@ -689,9 +690,20 @@ cmp.setup({
     ['<CR>'] = cmp.mapping.confirm({
       behavior = cmp.ConfirmBehavior.Insert,
       select = true,
+    }),
+  },
+  formatting = {
+    format = lspkind.cmp_format({
+      with_text = true, -- show text alongside icons
+      maxwidth = 50, -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
+      -- The function below will be called before any actual modifications from lspkind
+      -- so that you can provide more controls on popup customization. (See [#30](https://github.com/onsails/lspkind-nvim/pull/30))
+      -- before = function (entry, vim_item)
+      --  ...
+      --  return vim_item
+      -- end
     })
   },
-
   -- Installed sources
   sources = {
     { name = 'nvim_lsp' },
