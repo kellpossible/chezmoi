@@ -15,7 +15,9 @@ Plug 'NoahTheDuke/vim-just'
 " Collection of common configurations for the Nvim LSP client
 Plug 'neovim/nvim-lspconfig'
 Plug 'nvim-lua/lsp-status.nvim'
+
 Plug 'stevearc/dressing.nvim'
+Plug 'rcarriga/nvim-notify'
 
 " LSP Symbols Outline
 " Plug 'simrat39/symbols-outline.nvim'
@@ -181,6 +183,9 @@ let g:dashboard_custom_header = [
 " Configure comment
 lua require('Comment').setup()
 
+" Configure nvim-notify
+lua vim.notify = require("notify")
+
 " Configure marks
 lua << EOF
   require('marks').setup { 
@@ -217,7 +222,11 @@ lua << EOF
   }
 EOF
 " Configure neogit
-lua require('neogit').setup()
+lua << EOF
+require('neogit').setup({
+  disable_builtin_notifications = true,
+})
+EOF
 
 " Configure Zen modes
 lua << EOF
@@ -242,6 +251,7 @@ parser_config.org = {
 }
 
 require('nvim-treesitter.configs').setup {
+  ensure_installed = "maintained",
   highlight = {
     enable = true,
     disable = {'org'}, -- Remove this to use TS highlighter for some of the highlights (Experimental)
@@ -250,6 +260,7 @@ require('nvim-treesitter.configs').setup {
     -- Using this option may slow down your editor, and you may see some duplicate highlights.
     -- Instead of true it can also be a list of languages
     additional_vim_regex_highlighting = {'org'}, -- Required since TS highlighter doesn't support all syntax features (conceal)
+    -- additional_vim_regex_highlighting = true, -- required because multiline comment auto indent is broken
   },
   indent = {
     enable = true
@@ -421,13 +432,7 @@ EOF
 lua require('orgmode').setup()
 
 " Configure todo-comments
-lua << EOF
-require("todo-comments").setup {
-  -- your configuration comes here
-  -- or leave it empty to use the default settings
-  -- refer to the configuration section below
-}
-EOF
+lua require("todo-comments").setup()
 
 " Configure which-key
 lua << EOF
@@ -550,9 +555,6 @@ let g:Illuminate_delay = 300
 " Configure rust cargo crates
 lua require('crates').setup()
 
-" Configure LSP through rust-tools.nvim plugin.
-" rust-tools will configure and enable certain LSP features for us.
-" See https://github.com/simrat39/rust-tools.nvim#configuration
 lua <<EOF
 
 -- Lsp Status Configuration
@@ -577,7 +579,7 @@ local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
 
 -- Rust Setup
-local opts = {
+require('rust-tools').setup({
     tools = {
         autoSetHints = true,
         hover_with_actions = false,
@@ -618,9 +620,7 @@ local opts = {
         },
         capabilities = capabilities,
     },
-}
-
-require('rust-tools').setup(opts)
+})
 
 require('lspconfig').yamlls.setup {
   settings = {
@@ -655,8 +655,8 @@ nnoremap <silent> gW    <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
 nnoremap <silent> gs    <cmd>Telescope lsp_dynamic_workspace_symbols<CR>
 nnoremap <silent> gd    <cmd>lua vim.lsp.buf.definition()<CR>
 nnoremap <silent> <space>F    <cmd>lua vim.lsp.buf.formatting()<CR>
-nnoremap <silent> <space>a    <cmd>Telescope lsp_code_actions<CR>
-" nnoremap <silent> <space>a    <cmd>lua vim.lsp.buf.code_action()<CR>
+" nnoremap <silent> <space>a    <cmd>Telescope lsp_code_actions<CR>
+nnoremap <silent> <space>a    <cmd>lua vim.lsp.buf.code_action()<CR>
 " nnoremap <silent> <space>a    <cmd>CodeActionMenu<CR>
 nnoremap <silent> <space>r <cmd>lua vim.lsp.buf.rename()<CR>
 
