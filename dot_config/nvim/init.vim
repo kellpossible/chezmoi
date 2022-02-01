@@ -292,6 +292,7 @@ set number
 set expandtab
 set shiftwidth=4
 set tabstop=4
+set scrolloff=5
 set list
 set listchars=tab:▸\ ,trail:· " Show things that I normally don't want
 set termguicolors
