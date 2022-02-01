@@ -9,6 +9,7 @@ Plug 'nvim-lua/plenary.nvim'
 
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " We recommend updating the parsers on update
 Plug 'romgrk/nvim-treesitter-context'
+Plug 'nvim-treesitter/playground'
 
 Plug 'NoahTheDuke/vim-just'
 
@@ -271,6 +272,18 @@ EOF
 set foldmethod=expr
 set foldexpr=nvim_treesitter#foldexpr()
 set foldlevelstart=99 " Ensure everything is unfolded by default
+
+" nvim-treesitter-context config
+lua << EOF
+require("treesitter-context").setup({
+  patterns = {
+    rust = {
+      "enum_item",
+      "struct_item",
+    }
+  }
+})
+EOF
 
 " General Editor Settings
 syntax on
