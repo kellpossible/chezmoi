@@ -122,7 +122,7 @@ Plug 'ron-rs/ron.vim'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install' }
 
 " Code formatting without lsp
-Plug 'mhartington/formatter.nvim'
+Plug 'jose-elias-alvarez/null-ls.nvim'
 
 " Zen Modes
 Plug 'folke/zen-mode.nvim'
@@ -138,7 +138,7 @@ Plug 'chentau/marks.nvim'
 Plug 'nvim-orgmode/orgmode'
 Plug 'nvim-neorg/neorg'
 
-"Clipboard neoclip
+" Clipboard neoclip
 Plug 'AckslD/nvim-neoclip.lua'
 
 call plug#end()
@@ -253,6 +253,9 @@ parser_config.org = {
 
 require('nvim-treesitter.configs').setup {
   ensure_installed = "maintained",
+  autopairs = {
+    enable = true,
+  },
   highlight = {
     enable = true,
     disable = {'org'}, -- Remove this to use TS highlighter for some of the highlights (Experimental)
@@ -405,7 +408,17 @@ tmap   <silent>   <F12>   <C-\><C-n>:FloatermToggle<CR>
 
 
 " Configure gitsigns
-lua require('gitsigns').setup()
+lua << EOF
+  require('gitsigns').setup({
+    signs = {
+      add          = {hl = 'GitSignsAdd'   , text = '▎', numhl='GitSignsAddNr'   , linehl='GitSignsAddLn'},
+      change       = {hl = 'GitSignsChange', text = '▎', numhl='GitSignsChangeNr', linehl='GitSignsChangeLn'},
+      delete       = {hl = 'GitSignsDelete', text = '_', numhl='GitSignsDeleteNr', linehl='GitSignsDeleteLn'},
+      topdelete    = {hl = 'GitSignsDelete', text = '‾', numhl='GitSignsDeleteNr', linehl='GitSignsDeleteLn'},
+      changedelete = {hl = 'GitSignsChange', text = '~', numhl='GitSignsChangeNr', linehl='GitSignsChangeLn'},
+    },
+  })
+EOF
 nnoremap <silent> <space>h <cmd>Gitsigns preview_hunk<CR>
 
 " Configure indent-blankline
@@ -416,22 +429,26 @@ lua << EOF
     filetype_exclude = { "dashboard" },
   }
 EOF
-" Configure formatter
+
+" Configure null-ls
 lua << EOF
-  require("formatter").setup({
-    filetype = {
-      json = {
-        function()
-          return {
-            exe = "jq",
-            stdin = true
-          }
-        end
-      }
-    }
+  local null_ls = require("null-ls")
+  
+  local formatting = null_ls.builtins.formatting
+  local diagnostics = null_ls.builtins.diagnostics
+  local completion = null_ls.builtins.completion
+
+  null_ls.setup({
+      sources = {
+          formatting.stylua,
+          formatting.prettier.with({
+            filetypes = { "html", "json", "yaml", "markdown" },
+          }),
+          diagnostics.flake8,
+          -- completion.spell,
+      },
   })
 EOF
-nnoremap <silent> <leader>F <cmd>:Format<CR>
 
 " Configure trouble
 lua << EOF
@@ -459,7 +476,20 @@ EOF
 
 " Configure Auto Pairs
 lua << EOF
-  require('nvim-autopairs').setup{}
+  require('nvim-autopairs').setup({
+    disable_filetype = { "TelescopePrompt", "spectre_panel" },
+    fast_wrap = {
+      map = "<M-e>",
+      chars = { "{", "[", "(", '"', "'" },
+      pattern = string.gsub([[ [%'%"%)%>%]%)%}%,] ]], "%s+", ""),
+      offset = 0, -- Offset from pattern match
+      end_key = "$",
+      keys = "qwertyuiopzxcvbnmasdfghjkl",
+      check_comma = true,
+      highlight = "PmenuSel",
+      highlight_grey = "LineNr",
+    },
+  })
 EOF
 
 
