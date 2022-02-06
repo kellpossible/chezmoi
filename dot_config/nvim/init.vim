@@ -141,6 +141,9 @@ Plug 'nvim-neorg/neorg'
 " Clipboard neoclip
 Plug 'AckslD/nvim-neoclip.lua'
 
+" Dictionary and Thesaurus
+Plug 'rudism/telescope-dict.nvim'
+
 call plug#end()
 
 " Open urls, workaround because netrw isn't working...
@@ -233,8 +236,11 @@ EOF
 lua << EOF
   require('zen-mode').setup {
     window = {
-      width = 140
-    }
+      width = 120,
+      options = {
+        number = true,
+      }
+    },
   }
 EOF
 lua require('true-zen').setup()
@@ -709,6 +715,7 @@ nnoremap <silent> <space>G <cmd>terminal gitui<cr>
 
 " Spelling
 nnoremap <silent> <space>p <cmd>Telescope spell_suggest<cr>
+nnoremap <silent> <space>P <cmd>lua require('telescope').extensions.dict.synonyms()<cr>
 
 " Setup Completion
 " See https://github.com/hrsh7th/nvim-cmp#basic-configuration
