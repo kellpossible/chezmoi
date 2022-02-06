@@ -605,8 +605,7 @@ let g:Illuminate_delay = 300
 " Configure rust cargo crates
 lua require('crates').setup()
 
-lua <<EOF
-
+lua << EOF
 -- Lsp Status Configuration
 local lsp_status = require('lsp-status')
 lsp_status.register_progress()
@@ -623,6 +622,36 @@ lspconfig.texlab.setup{}
 -- Python LSP
 -- lspconfig.pylsp.setup{}
 lspconfig.pyright.setup{}
+
+-- Lua LSP
+local runtime_path = vim.split(package.path, ';')
+table.insert(runtime_path, "lua/?.lua")
+table.insert(runtime_path, "lua/?/init.lua")
+
+lspconfig.sumneko_lua.setup {
+  settings = {
+    Lua = {
+      runtime = {
+        -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
+        version = 'LuaJIT',
+        -- Setup your lua path
+        path = runtime_path,
+      },
+      diagnostics = {
+        -- Get the language server to recognize the `vim` global
+        globals = {'vim'},
+      },
+      workspace = {
+        -- Make the server aware of Neovim runtime files
+        library = vim.api.nvim_get_runtime_file("", true),
+      },
+      -- Do not send telemetry data containing a randomized but unique identifier
+      telemetry = {
+        enable = false,
+      },
+    },
+  },
+}
 
 -- https://github.com/hrsh7th/cmp-nvim-lsp#setup
 local capabilities = vim.lsp.protocol.make_client_capabilities()
