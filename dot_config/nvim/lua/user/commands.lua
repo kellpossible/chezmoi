@@ -16,10 +16,17 @@ function rgr_input()
 end
 
 vim.cmd [[
+
+  function! RunBacon()
+    execute "FloatermNew --wintype=vsplit --autoclose=1 --width=0.4 bacon clippy-all"
+    stopinsert
+    wincmd h
+  endfunction
   command! Broot FloatermNew --width=0.8 --height=0.8 broot
   command! NNN FloatermNew nnn
   command! FFF FloatermNew fff
   command! LF FloatermNew lf
   command! Ranger FloatermNew ranger
   command! Rgr lua rgr_input()
+  command! Bacon call RunBacon()
 ]]

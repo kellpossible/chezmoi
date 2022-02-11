@@ -5,7 +5,7 @@ local options = {
   list = true, -- strings to use in 'list' mode and for the :list command
   listchars = "tab:▸ ,trail:·", -- show things that I normally don't want
   mouse = "a", -- enables mouse support (in all modes)
-  number = false, -- precede each line with its line number
+  number = true, -- precede each line with its line number
   pumheight = 10, -- popup menu height
   scrolloff = 5, -- minimal number of screen lines to keep above and below the cursor
   shiftwidth = 4, -- number of spaces to use for each step of (auto)indent
@@ -16,10 +16,14 @@ local options = {
   swapfile = false, -- use a swap file for the buffer
   backup = false, -- create a backup file for the buffer
   foldlevelstart = 99, -- sets 'foldlevel' when starting to edit another buffer in a window
-  number = true,
-
   -- GUI --
-  guifont = "Mono:h8",
+  -- guifont = "FiraCode Nerd Font Mono:h8",
+  guifont = "DejaVuSansMono Nerd Font Mono:h8",
+  -- guifont = "Mono:h8",
+  -- guifont = "Hack Nerd Font:h8",
+  -- guifont = "RobotoMono Nerd Font:h8",
+  -- guifont = "SauceCodePro Nerd Font:h8",
+  -- guifont = "JetBrainsMono Nerd Font:h8"
  -- TODO: linebreak for markdown files
 }
 

@@ -21,13 +21,17 @@ require("user.autopairs")
 require("user.illuminate")
 require("user.indent-blankline")
 require("user.todo-comments")
+require("user.rust")
+require("user.browser")
 
 require("user.cokeline")
 require("user.statusline")
 
 require("user.keymaps")
 
-require("user.neovide")
+if vim.g.neovide then
+  require("user.neovide")
+end
 
 -- Un-cache lua files in "user" directory
 require('plenary.reload').reload_module('user', true)

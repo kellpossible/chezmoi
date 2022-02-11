@@ -123,7 +123,7 @@ return packer.startup(function(use)
   use "voldikss/vim-floaterm"
   use "numToStr/FTerm.nvim"
   use "voldikss/fzf-floaterm"
- 
+
   -- File Tree --
   use "kyazdani42/nvim-tree.lua"
   -- use "ptzz/lf.vim"
@@ -143,10 +143,10 @@ return packer.startup(function(use)
   -- cmp Buffer completion
   use "hrsh7th/cmp-buffer"
   -- See hrsh7th other plugins for more great completion sources!
-  
+
   -- Utilities --
   use "chrisbra/unicode.vim" -- Unicode character pickers
-  
+
   -- Rust --
   use {
     "ron-rs/ron.vim", -- Rusty Object Notation Syntax
@@ -155,7 +155,14 @@ return packer.startup(function(use)
   use "simrat39/rust-tools.nvim" -- Adds extra functionality over rust analyzer
   use "Saecki/crates.nvim"
 
+  use {
+    "mickael-menu/zk-nvim",
+    config = function()
+      require("zk").setup()
+    end
+  }
 
+  use "tyru/open-browser.vim"
   -- Automatically set up your configuration after cloning packer.nvim
   -- Put this at the end after all plugins
   if PACKER_BOOTSTRAP then
