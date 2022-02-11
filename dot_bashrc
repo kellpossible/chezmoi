@@ -14,7 +14,6 @@ alias neovide='neovide --multigrid'
 alias find='fd'
 alias cat='bat'
 
-
 # source /usr/share/git/completion/git-prompt.sh
 # PS1='[\u \w\[\033[01;33m\]$(__git_ps1 " (%s)")\[\033[00m\]]\$ '
 
@@ -34,3 +33,43 @@ export NVM_DIR="$HOME/.nvm"
 export EDITOR="nvim"
 
 source /home/luke/.config/broot/launcher/bash/br
+
+fzf-git-branch() {
+    git rev-parse HEAD > /dev/null 2>&1 || return
+
+    local all
+    all=""
+    if [[ "$1" = "all" ]]; then
+        all="--all"
+    fi
+
+    git branch --color=always $all --sort=-committerdate |
+        grep -v HEAD |
+        fzf --height 50% --ansi --no-multi --preview-window right:65% \
+            --preview 'git log -n 50 --color=always --date=short --pretty="format:%C(auto)%cd %h%d %s" $(sed "s/.* //" <<< {})' |
+        sed "s/.* //"
+}
+
+
+fzf-git-checkout() {
+    git rev-parse HEAD > /dev/null 2>&1 || return
+
+    local branch
+    branch=$(fzf-git-branch $1)
+    if [[ "$branch" = "" ]]; then
+        echo "No branch selected."
+        return
+    fi
+
+    # If branch name starts with 'remotes/' then it is a remote branch. By
+    # using --track and a remote branch name, it is the same as:
+    # git checkout -b branchName --track origin/branchName
+    if [[ "$branch" = 'remotes/'* ]]; then
+        git checkout --track $branch
+    else
+        git checkout $branch;
+    fi
+}
+
+alias gb='fzf-git-branch'
+alias gco='fzf-git-checkout'
