@@ -17,8 +17,8 @@ local options = {
   backup = false, -- create a backup file for the buffer
   foldlevelstart = 99, -- sets 'foldlevel' when starting to edit another buffer in a window
   -- GUI --
-  -- guifont = "FiraCode Nerd Font Mono:h8",
-  guifont = "DejaVuSansMono Nerd Font Mono:h8",
+  guifont = "FiraCode Nerd Font Mono:h8",
+  -- guifont = "DejaVuSansMono Nerd Font Mono:h8",
   -- guifont = "Mono:h8",
   -- guifont = "Hack Nerd Font:h8",
   -- guifont = "RobotoMono Nerd Font:h8",

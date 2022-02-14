@@ -29,4 +29,5 @@ vim.cmd [[
   command! Ranger FloatermNew ranger
   command! Rgr lua rgr_input()
   command! Bacon call RunBacon()
+  command! Agenda FloatermNew --width=0.4 --autoclose=0 gcalcli agenda
 ]]

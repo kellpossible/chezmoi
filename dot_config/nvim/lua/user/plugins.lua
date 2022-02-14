@@ -54,6 +54,12 @@ return packer.startup(function(use)
   use "kyazdani42/nvim-web-devicons"
   use "drzel/vim-gui-zoom" -- Zoom for neovide
   use "noib3/nvim-cokeline" -- Bufferline
+  use {
+    "hoschi/yode-nvim", -- Focused code editing
+    config = function()
+      require('yode-nvim').setup({})
+    end
+  }
 
   -- Syntax --
   use {
@@ -161,6 +167,7 @@ return packer.startup(function(use)
       require("zk").setup()
     end
   }
+  -- use "renerocksai/telekasten.nvim"
 
   use "tyru/open-browser.vim"
   -- Automatically set up your configuration after cloning packer.nvim

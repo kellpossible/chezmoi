@@ -38,6 +38,7 @@ local normal_mappings = {
     g = { "<cmd>Neogit<CR>", "Git status" },
     i = { "<cmd>IndentBlanklineToggle<CR>", "Toggle indentation guides" },
     j = { "<cmd>HopWord<CR>", "Hop to word" },
+    J = { "<cmd>HopChar2<CR>", "Hop to 2 characters" },
     k = { "<cmd>lua vim.lsp.buf.hover()<CR>", "Lsp hover" },
     K = { "<cmd>lua vim.lsp.buf.signature_help()<CR>", "Signature help" },
     l = { "<cmd>HopLine<CR>", "Hop to line" },
@@ -56,6 +57,10 @@ local normal_mappings = {
       k = { ":Telescope keymaps<CR>", "List keymaps" },
       o = { ":Telescope vim_options<CR>", "List vim options" },
       r = { ":Telescope oldfiles<CR>", "List recent files" },
+    },
+    y = {
+      name = "Yode",
+      c = { ":YodeCreateSeditorFloating<CR>", "Create floating editor"},
     },
     z = {
       name = "Fuzzy finder",
@@ -123,9 +128,14 @@ local visual_mappings = {
   ["<leader>"] = {
     ["/"] = { "<cmd>HopPattern<CR>", "Hop to pattern" },
     j = { "<cmd>HopWord<CR>", "Hop to word" },
+    J = { "<cmd>HopChar2<CR>", "Hop to 2 characters" },
     l = { "<cmd>HopLine<CR>", "Hop to line" },
     L = { "<cmd>HopLineStart<CR>", "Hop to line start" },
     s = { ":sort i<CR>", "Sort selection" },
+    y = {
+      name = "Yode",
+      c = { ":YodeCreateSeditorFloating<CR>", "Create floating editor"},
+    },
   },
   t = { "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.AFTER_CURSOR, current_line_only = true })<cr>", "Hop to next char" },
   T = { "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.BEFORE_CURSOR, current_line_only = true })<cr>", "Hop to previous char" },
