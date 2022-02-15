@@ -11,6 +11,16 @@ vim.g.maplocalleader = " "
 local wk = require("which-key")
 wk.setup()
 
+
+local lg = require("legendary")
+lg.setup {
+  auto_register_which_key = false,
+}
+
+
+local normal_opts = {
+  mode = "n", -- NORMAL mode
+}
 -- Normal Mode --
 -- which-key mappings
 local normal_mappings = {
@@ -25,6 +35,7 @@ local normal_mappings = {
     ["/"] = { "<cmd>HopPattern<CR>", "Hop to pattern" },
     -- a = { "<cmd>lua vim.lsp.buf.code_action()<CR>", "Code action" },
     a = { "<cmd>CodeActionMenu<CR>", "Code action" },
+    A = { "<cmd>lua require('legendary').find()<CR>", "Command pallete" },
     -- b = { ":Telescope buffers<CR>", "List buffers" },
     b = { ":Fzf buffers<CR>", "List buffers" },
     B = { ":Broot<CR>", "Broot file explorer" },
@@ -98,8 +109,8 @@ local normal_mappings = {
   ["<F12>"] = { "<cmd>FloatermToggle<CR>", "Toggle terminal" },
 }
 
-wk.register(normal_mappings)
-
+wk.register(normal_mappings, normal_opts)
+lg.bind_whichkey(normal_mappings, normal_opts)
 
 -- Better window navigation
 keymap("n", "<C-h>", "<C-w>h", opts)
@@ -120,6 +131,9 @@ keymap("n", "<S-h>", ":bprevious<cr>", opts)
 
 -- Visual --
 -- which-key
+local visual_opts = {
+  mode = "v", -- VISUAL mode
+}
 local visual_mappings = {
   ["<A-j>"] = { ":MoveBlock(1)<CR>", "Move block up" },
   ["<A-k>"] = { ":MoveBlock(-1)<CR>", "Move block down" },
@@ -147,7 +161,8 @@ local visual_mappings = {
   ["<F12>"] = { "<cmd>FloatermToggle<CR>", "Toggle terminal" },
 }
 
-wk.register(visual_mappings, { mode = "v" })
+wk.register(visual_mappings, visual_opts)
+lg.bind_whichkey(visual_opts, visual_opts)
 
 -- Stay in indent mode
 keymap("v", "<", "<gv", opts)
@@ -165,7 +180,6 @@ local terminal_mappings = {
 }
 
 wk.register(terminal_mappings, { mode = "t" })
-
 
 -- Clipboard --
 -- Copy

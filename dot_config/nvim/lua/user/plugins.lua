@@ -50,6 +50,7 @@ return packer.startup(function(use)
   use "stevearc/dressing.nvim" -- Reskin a bunch of UI elements
   use "rcarriga/nvim-notify" -- Popup notifications
   use "folke/which-key.nvim" -- Help messages for keyboard shortcuts
+  use "mrjones2014/legendary.nvim" -- Command Pallet
   use "phaazon/hop.nvim" -- Jump around document using keyboard
   use "kyazdani42/nvim-web-devicons"
   use "drzel/vim-gui-zoom" -- Zoom for neovide
@@ -170,6 +171,7 @@ return packer.startup(function(use)
   -- use "renerocksai/telekasten.nvim"
 
   use "tyru/open-browser.vim"
+
   -- Automatically set up your configuration after cloning packer.nvim
   -- Put this at the end after all plugins
   if PACKER_BOOTSTRAP then
