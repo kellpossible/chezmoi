@@ -4,7 +4,7 @@ return {
   hyperlink_rules = {
     -- Linkify things that look like URLs
     {
-      regex = [[\b\w+://(?:[\w.-]+)\.[a-z0-9]{1,15}\S*\b]],
+      regex = [[\b\w+:[/]{2}(?:[\w.-]+\.[a-z0-9]{1,15}|localhost)\S*\b]],
       format = "$0",
     },
   },
