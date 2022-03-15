@@ -159,7 +159,12 @@ return packer.startup(function(use)
     "ron-rs/ron.vim", -- Rusty Object Notation Syntax
     ft = { "ron" },
   }
-  use "simrat39/rust-tools.nvim" -- Adds extra functionality over rust analyzer
+  -- use "simrat39/rust-tools.nvim" -- Adds extra functionality over rust analyzer
+  -- TODO: waiting for https://github.com/simrat39/rust-tools.nvim/pull/151 to be merged
+  use {
+    "matze/rust-tools.nvim",
+    branch = "fix-upstreamed-inlayhints"
+  }
   use "Saecki/crates.nvim"
 
   use {
