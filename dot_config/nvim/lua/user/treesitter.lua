@@ -42,3 +42,11 @@ treesitter_context.setup {
     }
   }
 }
+
+local status_ok, install = pcall(require, "nvim-treesitter.install")
+if not status_ok then
+  print("Error while loading treesitter install")
+  return
+end
+
+install.compilers = { "clang" }
