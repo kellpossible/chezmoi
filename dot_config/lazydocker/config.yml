@@ -1,0 +1,5 @@
+reporting: "off"
+commandTemplates:
+  viewContainerLogs: docker logs --follow --since=60m {{ .Container.ID
+    }}
+  containerLogs: docker logs --follow --since=60m {{ .Container.ID }}
