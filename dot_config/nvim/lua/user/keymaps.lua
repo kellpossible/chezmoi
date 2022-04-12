@@ -69,6 +69,7 @@ local normal_mappings = {
       o = { ":Telescope vim_options<CR>", "List vim options" },
       r = { ":Telescope oldfiles<CR>", "List recent files" },
     },
+    T = { "<cmd>Trouble<CR>", "Trouble" },
     y = {
       name = "Yode",
       c = { ":YodeCreateSeditorFloating<CR>", "Create floating editor"},
