@@ -1,0 +1,13 @@
+theme = "monokai"
+
+[editor]
+
+[editor.cursor-shape]
+insert = "bar"
+normal = "block"
+select = "block"
+
+[editor.whitespace.render]
+space = "none"
+tab = "all"
+newline = "none"
