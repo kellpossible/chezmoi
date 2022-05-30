@@ -3,4 +3,4 @@ vim.g.neovide_window_floating_opacity = 1
 vim.g.neovide_window_floating_blur = 0
 vim.g.neovide_floating_blur = 0
 vim.g.neovide_floating_opacity = 1
-vim.g:neovide_confirm_quit = 1
+vim.g.neovide_confirm_quit = 1
