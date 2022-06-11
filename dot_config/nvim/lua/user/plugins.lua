@@ -68,7 +68,7 @@ return packer.startup(function(use)
       run = ":TSUpdate",
   }
   use "nvim-treesitter/playground"
-  use "romgrk/nvim-treesitter-context"
+  use "nvim-treesitter/nvim-treesitter-context"
   use "numToStr/Comment.nvim"
   use {
     'lewis6991/spellsitter.nvim',
