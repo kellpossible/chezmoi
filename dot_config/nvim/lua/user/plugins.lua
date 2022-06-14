@@ -78,13 +78,12 @@ return packer.startup(function(use)
   }
   use "lukas-reineke/indent-blankline.nvim"
   use "RRethy/vim-illuminate"
-  use {
-    "monkoose/matchparen.nvim",
-    config = function()
-      vim.g.loaded_matchparen = 1
-      require('matchparen').setup()
-    end
-  }
+  -- use {
+  --   "monkoose/matchparen.nvim",
+  --   config = function()
+  --     require('matchparen').setup()
+  --   end
+  -- }
 
   -- Language Server Protocol (LSP) --
   use "neovim/nvim-lspconfig"
