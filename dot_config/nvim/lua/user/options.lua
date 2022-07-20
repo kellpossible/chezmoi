@@ -10,6 +10,7 @@ local options = {
   scrolloff = 5, -- minimal number of screen lines to keep above and below the cursor
   shiftwidth = 4, -- number of spaces to use for each step of (auto)indent
   sidescrolloff = 5, -- the minimal number of screen columns to keep to the left and to the right of the cursor if 'nowrap' is set
+  cmdheight = 0, -- Number of screen lines to use for the command-line
   tabstop = 4, -- number of spaces that a <Tab> in the file counts for
   termguicolors = true, -- enables 24-bit RGB color in the TUI
   wrap = true, -- line wrapping

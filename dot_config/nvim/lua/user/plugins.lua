@@ -61,6 +61,16 @@ return packer.startup(function(use)
       require('yode-nvim').setup({})
     end
   }
+  use {
+    "danilamihailov/beacon.nvim", -- Highlight cursor jumps
+    config = function()
+      -- Not required for neovide because it already has the animated cursor
+      if vim.g.neovide then
+        vim.g.beacon_enable = 0
+      end
+    end
+  }
+  use "ThePrimeagen/harpoon" -- Improved marks
 
   -- Syntax --
   use {
@@ -92,7 +102,16 @@ return packer.startup(function(use)
   use "ray-x/lsp_signature.nvim"
   use "onsails/lspkind-nvim"
   use "weilbith/nvim-code-action-menu"
-  use "nvim-lua/lsp-status.nvim"
+  -- use "nvim-lua/lsp-status.nvim" -- currently broken https://github.com/nvim-lua/lsp-status.nvim/issues/79
+  use {
+    'nvim-lualine/lualine.nvim',
+    requires = { 'kyazdani42/nvim-web-devicons', opt = true }
+  }
+
+  -- Debug Adapter Protocol (DAP)
+  use "mfussenegger/nvim-dap"
+  use "rcarriga/nvim-dap-ui"
+  use "theHamsta/nvim-dap-virtual-text"
 
   -- Text Editing --
   use "fedepujol/move.nvim" -- Move blocks of text
@@ -102,9 +121,22 @@ return packer.startup(function(use)
   -- Git --
   use "TimUntersberger/neogit"
   use "lewis6991/gitsigns.nvim"
+  use "akinsho/git-conflict.nvim"
+  use {
+    "pwntester/octo.nvim",
+    requires = {
+      'nvim-lua/plenary.nvim',
+      'nvim-telescope/telescope.nvim',
+      'kyazdani42/nvim-web-devicons',
+    },
+    config = function ()
+      require("octo").setup()
+    end
+  }
 
   -- Colorschemes --
   use "sainnhe/sonokai"
+  use "rebelot/kanagawa.nvim"
 
   -- Writing Modes --
   use "folke/zen-mode.nvim"
@@ -158,7 +190,10 @@ return packer.startup(function(use)
     "ron-rs/ron.vim", -- Rusty Object Notation Syntax
     ft = { "ron" },
   }
-  use "simrat39/rust-tools.nvim" -- Adds extra functionality over rust analyzer
+  use {
+    "simrat39/rust-tools.nvim", -- Adds extra functionality over rust analyzer
+    branch = "modularize_and_inlay_rewrite",
+  }
   use "Saecki/crates.nvim"
 
   use {
@@ -168,6 +203,9 @@ return packer.startup(function(use)
     end
   }
   -- use "renerocksai/telekasten.nvim"
+
+  -- FlatBuffers --
+  use "zchee/vim-flatbuffers"
 
   use "tyru/open-browser.vim"
 
