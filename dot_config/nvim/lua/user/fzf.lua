@@ -11,4 +11,9 @@ fzf_lua.setup {
     ['--height']      = '100%',
     ['--layout']      = 'reverse',
   },
+  git = {
+    status = {
+      preview_pager = "delta --width=$FZF_PREVIEW_COLUMNS",
+    },
+  },
 }

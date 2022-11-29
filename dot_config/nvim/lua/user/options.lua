@@ -25,7 +25,7 @@ local options = {
   -- guifont = "RobotoMono Nerd Font:h8",
   -- guifont = "SauceCodePro Nerd Font:h8",
   -- guifont = "JetBrainsMono Nerd Font:h8"
- -- TODO: linebreak for markdown files
+  -- TODO: linebreak for markdown files
 }
 
 for k, v in pairs(options) do

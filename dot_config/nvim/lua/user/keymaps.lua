@@ -11,11 +11,6 @@ vim.g.maplocalleader = " "
 local wk = require("which-key")
 wk.setup()
 
-local lg = require("legendary")
-lg.setup({
-  auto_register_which_key = false,
-})
-
 local normal_opts = {
   mode = "n", -- NORMAL mode
 }
@@ -46,28 +41,37 @@ local normal_mappings = {
     -- B = { ":Broot<CR>", "Broot file explorer" },
     C = { "<cmd>lua setAutoCmp(false)<cr>", "Turn off autocomplete" },
     c = { "<cmd>lua setAutoCmp(true)<cr>", "Turn on autocomplete" },
-    d = {
-      name = "Debugging",
-      b = { "<cmd>lua require(\"dap\").toggle_breakpoint()<CR>", "Toggle breakpoint" },
-      c = { "<cmd>lua require(\"dap\").continue()<CR>", "Continue" },
-      d = { "<cmd>lua require(\"dap\").down()<CR>", "Down in stacktrace" },
-      f = { "<cmd>FzfLua dap_breakpoints<CR>", "List breakpoints" },
-      i = { "<cmd>lua require(\"dap\").step_into()<CR>", "Step into" },
-      n = { "<cmd>lua require(\"dap\").step_over()<CR>", "Step over" },
-      o = { "<cmd>lua require(\"dap\").step_into()<CR>", "Step out" },
-      p = { "<cmd>lua require(\"dap\").pause()<CR>", "Pause execution" },
-      r = { "<cmd>RustDebuggables<CR>", "List Rust debuggables"},
-      R = { "<cmd>lua require(\"dap\").run_to_cursor()<CR>", "Run to cursor" },
-      t = { "<cmd>lua require(\"dap\").terminate()<CR>", "Terminate debug session" },
-      u = { "<cmd>lua require(\"dap\").up()<CR>", "Up in stacktrace" },
-    },
-    D = { "<cmd>lua vim.diagnostic.open_float()<CR>", "Open diagnostics" },
+    d = { "<cmd>lua vim.diagnostic.open_float()<CR>", "Open diagnostics" },
     -- f = { ":Telescope find_files<CR>", "List files" },
     e = { "<cmd>NvimTreeFindFileToggle<CR>", "Toggle tree" },
     f = { "<cmd>FzfLua files<CR>", "List files" }, -- much faster!
     F = { "<cmd>FzfLua git_files<CR>", "List files (git)" }, -- much faster!
-    g = { "<cmd>Neogit<CR>", "Git status page" },
-    G = { "<cmd>FzfLua git_status<CR>", "Git status fzf" },
+    g = {
+      name = "Git",
+      b = { "<cmd>Gitsigns blame_line<CR>", "Blame line" },
+      B = { "<cmd>GitBlameToggle<CR>", "Toggle blame" },
+      c = {
+        name = "Conflict",
+          b = { "<cmd>GitConflictChooseBoth<CR>", "Choose both" },
+          n = { "<cmd>GitConflictNextConflict<CR>", "Next conflict" },
+          N = { "<cmd>GitConflictChooseNone<CR>", "Choose none" },
+          o = { "<cmd>GitConflictChooseOurs<CR>", "Choose ours" },
+          p = { "<cmd>GitConflictPrevConflict<CR>", "Previous conflict" },
+          q = { "<cmd>GitConflictListQf<CR>", "Conflict quickfix list" },
+          t = { "<cmd>GitConflictChooseTheirs<CR>", "Choose theirs" },
+      },
+      C = { "<cmd>GitBlameOpenCommitURL<CR>", "Open commit blame URL" },
+      g = { "<cmd>Neogit<CR>", "Git status" },
+      h = { "<cmd>Gitsigns preview_hunk<CR>", "Preview hunk" },
+      n = { "<cmd>Gitsigns next_hunk<CR>", "Next hunk" },
+      o = { "<cmd>FzfLua git_branches<CR>", "Checkout branch" },
+      p = { "<cmd>Gitsigns prev_hunk<CR>", "Previous hunk" },
+      r = { "<cmd>Gitsigns reset_hunk<CR>", "Reset hunk" },
+      R = { "<cmd>Gitsigns reset_buffer<CR>", "Reset hunk" },
+      s = { "<cmd>Gitsigns stage_hunk<CR>", "Stage hunk" },
+      S = { "<cmd>Gitsigns stage_buffer<CR>", "Stage buffer" },
+      z = { "<cmd>FzfLua git_status<CR>", "Git status fzf" },
+    },
     h = { "<cmd>lua require(\"harpoon.ui\").toggle_quick_menu()<CR>", "Harpoon menu"},
     H = { "<cmd>lua require(\"harpoon.mark\").add_file()<CR>", "Harpoon add file" },
     i = { "<cmd>IndentBlanklineToggle<CR>", "Toggle indentation guides" },
@@ -93,6 +97,21 @@ local normal_mappings = {
       r = { ":Telescope oldfiles<CR>", "List recent files" },
     },
     T = { "<cmd>Trouble<CR>", "Trouble" },
+    u = {
+      name = "Debugging",
+      b = { "<cmd>lua require(\"dap\").toggle_breakpoint()<CR>", "Toggle breakpoint" },
+      c = { "<cmd>lua require(\"dap\").continue()<CR>", "Continue" },
+      d = { "<cmd>lua require(\"dap\").down()<CR>", "Down in stacktrace" },
+      f = { "<cmd>FzfLua dap_breakpoints<CR>", "List breakpoints" },
+      i = { "<cmd>lua require(\"dap\").step_into()<CR>", "Step into" },
+      n = { "<cmd>lua require(\"dap\").step_over()<CR>", "Step over" },
+      o = { "<cmd>lua require(\"dap\").step_into()<CR>", "Step out" },
+      p = { "<cmd>lua require(\"dap\").pause()<CR>", "Pause execution" },
+      r = { "<cmd>RustDebuggables<CR>", "List Rust debuggables"},
+      R = { "<cmd>lua require(\"dap\").run_to_cursor()<CR>", "Run to cursor" },
+      t = { "<cmd>lua require(\"dap\").terminate()<CR>", "Terminate debug session" },
+      u = { "<cmd>lua require(\"dap\").up()<CR>", "Up in stacktrace" },
+    },
     w = { "<cmd>w<CR>", "Write buffer" },
     y = {
       name = "Yode",
@@ -100,7 +119,6 @@ local normal_mappings = {
     },
     z = {
       name = "Fuzzy finder",
-      b = { ":FzfLua git_branches<CR>", "Git branches" },
       B = { ":FzfLua grep_curbuf<CR>", "Grep in buffer" },
       C = { ":FzfLua command_history<CR>", "List previous commands" },
       c = { ":FzfLua commands<CR>", "List commands" },
@@ -145,7 +163,6 @@ local normal_mappings = {
 }
 
 wk.register(normal_mappings, normal_opts)
-lg.bind_whichkey(normal_mappings, normal_opts)
 
 --- Better window navigation
 keymap("n", "<C-h>", "<C-w>h", opts)
@@ -190,6 +207,7 @@ local visual_mappings = {
       c = { ":YodeCreateSeditorFloating<CR>", "Create floating editor" },
     },
   },
+  a = { "<cmd>lua vim.lsp.buf.range_code_action()<CR>", "Range code action"},
   t = {
     "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.AFTER_CURSOR, current_line_only = true })<cr>",
     "Hop to next char",
@@ -206,7 +224,6 @@ local visual_mappings = {
 }
 
 wk.register(visual_mappings, visual_opts)
-lg.bind_whichkey(visual_opts, visual_opts)
 
 -- Stay in indent mode
 keymap("v", "<", "<gv", opts)
@@ -243,20 +260,3 @@ vim.cmd([[
   " use <c-r> to insert original character without triggering things like auto-pairs
   inoremap <c-r> <c-v>
 ]])
-
----PATCH from https://github.com/folke/which-key.nvim/pull/305
-local wk_view = require 'which-key.view'
-wk_view.hide = function()
-  vim.api.nvim_echo({ { "" } }, false, {})
-  vim.cmd 'redraw'
-  wk_view.hide_cursor()
-  if wk_view.buf and vim.api.nvim_buf_is_valid(wk_view.buf) then
-    vim.api.nvim_buf_delete(wk_view.buf, { force = true })
-    wk_view.buf = nil
-  end
-  if wk_view.win and vim.api.nvim_win_is_valid(wk_view.win) then
-    vim.api.nvim_win_close(wk_view.win, { force = true })
-    wk_view.win = nil
-  end
-end
----ENDPATCH

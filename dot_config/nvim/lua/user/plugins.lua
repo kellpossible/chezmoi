@@ -46,15 +46,18 @@ return packer.startup(function(use)
   use "nvim-lua/popup.nvim" -- An implementation of the Popup API from vim in Neovim
   use "nvim-lua/plenary.nvim" -- Useful lua functions used ny lots of plugins
 
+  -- Configuration --
+  use "gpanders/editorconfig.nvim"
+
   -- UI Improvements --
   use "stevearc/dressing.nvim" -- Reskin a bunch of UI elements
   use "rcarriga/nvim-notify" -- Popup notifications
   use "folke/which-key.nvim" -- Help messages for keyboard shortcuts
-  use "mrjones2014/legendary.nvim" -- Command Pallet
   use "phaazon/hop.nvim" -- Jump around document using keyboard
   use "kyazdani42/nvim-web-devicons"
   use "drzel/vim-gui-zoom" -- Zoom for neovide
-  use "noib3/nvim-cokeline" -- Bufferline
+  use "karb94/neoscroll.nvim" -- Smooth scroll
+  -- use "noib3/nvim-cokeline" -- Bufferline
   use {
     "hoschi/yode-nvim", -- Focused code editing
     config = function()
@@ -81,7 +84,7 @@ return packer.startup(function(use)
   use "nvim-treesitter/nvim-treesitter-context"
   use "numToStr/Comment.nvim"
   use {
-    'lewis6991/spellsitter.nvim',
+    "lewis6991/spellsitter.nvim",
     config = function()
       require('spellsitter').setup()
     end
@@ -94,6 +97,13 @@ return packer.startup(function(use)
   --     require('matchparen').setup()
   --   end
   -- }
+  use {
+    "kylechui/nvim-surround",
+    config = function()
+      require("nvim-surround").setup()
+    end
+  }
+  use "NoahTheDuke/vim-just"
 
   -- Language Server Protocol (LSP) --
   use "neovim/nvim-lspconfig"
@@ -102,7 +112,7 @@ return packer.startup(function(use)
   use "ray-x/lsp_signature.nvim"
   use "onsails/lspkind-nvim"
   use "weilbith/nvim-code-action-menu"
-  -- use "nvim-lua/lsp-status.nvim" -- currently broken https://github.com/nvim-lua/lsp-status.nvim/issues/79
+  use "nvim-lua/lsp-status.nvim"
   use {
     'nvim-lualine/lualine.nvim',
     requires = { 'kyazdani42/nvim-web-devicons', opt = true }
@@ -119,9 +129,12 @@ return packer.startup(function(use)
   use "windwp/nvim-autopairs"
 
   -- Git --
-  use "TimUntersberger/neogit"
-  use "lewis6991/gitsigns.nvim"
   use "akinsho/git-conflict.nvim"
+  use "sindrets/diffview.nvim"
+  use "f-person/git-blame.nvim"
+  use "lewis6991/gitsigns.nvim"
+  use "tanvirtin/vgit.nvim"
+  use "TimUntersberger/neogit"
   use {
     "pwntester/octo.nvim",
     requires = {

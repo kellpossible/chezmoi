@@ -21,8 +21,6 @@ alias cat='bat'
 [ -f /opt/mambaforge/etc/profile.d/conda.sh ] && source /opt/mambaforge/etc/profile.d/conda.sh
 
 # Poetry package manager environment
-source $HOME/.poetry/env
-
 eval "$(starship init bash)"
 eval "$(zoxide init bash)"
 
