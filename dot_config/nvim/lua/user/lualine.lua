@@ -10,7 +10,13 @@ require('lualine').setup {
   },
   sections = {
     lualine_a = {},
-    lualine_b = {},
+    lualine_b = {
+      function ()
+        local progress = lsp_status.status_progress()
+        print('PROGRESS: ', progress)
+        return progress
+      end
+    },
     lualine_c = {
       {
         'filename',
@@ -22,7 +28,7 @@ require('lualine').setup {
         'diagnostics',
         sources = { 'nvim_lsp', 'nvim_diagnostic' },
         colored = false,
-      }
+      },
     },
     lualine_x = {'filetype', 'branch'},
     lualine_y = {'progress', 'location'},

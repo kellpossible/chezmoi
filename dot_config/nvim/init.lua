@@ -1,6 +1,8 @@
-require("user.dap")
 require("user.options")
 require("user.plugins")
+require("user.mason")
+
+require("user.dap")
 require("user.titlestring")
 require("user.notify")
 require("user.lsp")
@@ -30,8 +32,8 @@ require("user.browser")
 require("user.scroll")
 
 -- require("user.cokeline")
-require("user.lualine")
--- require("user.statusline") -- broken https://github.com/nvim-lua/lsp-status.nvim/issues/79
+-- require("user.lualine")
+require("user.statusline") -- broken https://github.com/nvim-lua/lsp-status.nvim/issues/79
 
 require("user.keymaps")
 

@@ -1,5 +1,7 @@
-require("lspconfig")
-require("user.lsp.lsp-installer")
+-- require("user.lsp.installer")
+require("user.lsp.mason")
+require("user.lsp.config")
+require("user.lsp.rust-tools")
 require("user.lsp.null-ls")
-require("user.lsp.lsp-signature")
--- require("user.lsp.lsp-status") -- currently broken https://github.com/nvim-lua/lsp-status.nvim/issues/79
+require("user.lsp.signature")
+require("user.lsp.status")

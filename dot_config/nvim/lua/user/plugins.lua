@@ -105,9 +105,12 @@ return packer.startup(function(use)
   }
   use "NoahTheDuke/vim-just"
 
+  -- Tools Package Manager (LSP, DAP, Linters) --
+  use "williamboman/mason.nvim"
+
   -- Language Server Protocol (LSP) --
+  use "williamboman/mason-lspconfig.nvim"
   use "neovim/nvim-lspconfig"
-  use "williamboman/nvim-lsp-installer"
   use "jose-elias-alvarez/null-ls.nvim"
   use "ray-x/lsp_signature.nvim"
   use "onsails/lspkind-nvim"

@@ -252,11 +252,11 @@ wk.register(terminal_mappings, { mode = "t" })
 -- keymap("v", "<leader>p", "\"+P", opts)
 
 vim.cmd([[
-  nmap <c-c> "+y
-  vmap <c-c> "+y
-  nmap <c-v> "+p
-  inoremap <c-v> <c-r>+
-  cnoremap <c-v> <c-r>+
+  nmap <C-c> "+y
+  vmap <C-c> "+y
+  nmap <C-v> "+p
+  inoremap <C-v> <C-r>+
+  cnoremap <C-v> <C-r>+
   " use <c-r> to insert original character without triggering things like auto-pairs
-  inoremap <c-r> <c-v>
+  inoremap <C-r> <C-v>
 ]])
