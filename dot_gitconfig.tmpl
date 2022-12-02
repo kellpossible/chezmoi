@@ -3,7 +3,11 @@
 
 [user]
 	name = Luke Frisken
-	email = l.frisken@gmail.com
+    {{- if eq .chezmoi.hostname "luke-partly-laptop" }}
+	email = luke@partly.com
+    {{- else }}
+    email = l.frisken@gmail.com
+    {{ end }}
 
 [core]
 	editor = nvim
