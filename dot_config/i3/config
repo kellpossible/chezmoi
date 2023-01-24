@@ -58,6 +58,9 @@ bindsym $mod+Shift+d exec --no-startup-id xfce4-appfinder
 # .desktop file. It is a wrapper around dmenu, so you need that installed.
 # bindcode $mod+40 exec --no-startup-id i3-dmenu-desktop
 
+# Hide the bar
+bindsym $mod+m bar mode toggle
+
 # change focus
 bindsym $mod+h focus left
 bindsym $mod+j focus down
@@ -187,7 +190,9 @@ bindsym $mod+r mode "resize"
 # finds out, if available)
 bar {
 	position top
-        status_command i3status
+    status_command i3status
+    modifier none
+    binding_mode_indicator no
 }
 
 #
