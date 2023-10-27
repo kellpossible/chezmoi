@@ -18,7 +18,7 @@ local options = {
   backup = false, -- create a backup file for the buffer
   foldlevelstart = 99, -- sets 'foldlevel' when starting to edit another buffer in a window
   -- GUI --
-  guifont = "FiraCode Nerd Font Mono:h12",
+  guifont = "FiraCode Nerd Font Mono:h13",
   -- guifont = "DejaVuSansMono Nerd Font Mono:h8",
   -- guifont = "Mono:h8",
   -- guifont = "Hack Nerd Font:h8",
@@ -34,3 +34,9 @@ end
 
 -- Any append options
 vim.opt.iskeyword = vim.opt.iskeyword + "-" -- Keywords are used in searching and recognizing with many commands
+
+vim.cmd([[
+filetype on        " enable filetype detection
+filetype plugin on " load file-specific plugins
+filetype indent on " load file-specific indentation
+]])

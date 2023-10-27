@@ -46,9 +46,6 @@ return packer.startup(function(use)
   use "nvim-lua/popup.nvim" -- An implementation of the Popup API from vim in Neovim
   use "nvim-lua/plenary.nvim" -- Useful lua functions used ny lots of plugins
 
-  -- Configuration --
-  use "gpanders/editorconfig.nvim"
-
   -- UI Improvements --
   use "stevearc/dressing.nvim" -- Reskin a bunch of UI elements
   use "rcarriga/nvim-notify" -- Popup notifications
@@ -104,6 +101,8 @@ return packer.startup(function(use)
     end
   }
   use "NoahTheDuke/vim-just"
+  use "Glench/Vim-Jinja2-Syntax"
+  use "projectfluent/fluent.vim"
 
   -- Tools Package Manager (LSP, DAP, Linters) --
   use "williamboman/mason.nvim"
@@ -120,6 +119,7 @@ return packer.startup(function(use)
     'nvim-lualine/lualine.nvim',
     requires = { 'kyazdani42/nvim-web-devicons', opt = true }
   }
+  -- use "MunifTanjim/prettier.nvim"
 
   -- Debug Adapter Protocol (DAP)
   use "mfussenegger/nvim-dap"
@@ -131,12 +131,32 @@ return packer.startup(function(use)
   use "mg979/vim-visual-multi"
   use "windwp/nvim-autopairs"
 
+  -- AI Assistants --
+  use {
+    "jackMort/ChatGPT.nvim",
+    requires = {
+      "MunifTanjim/nui.nvim",
+      "nvim-lua/plenary.nvim",
+      "nvim-telescope/telescope.nvim"
+    }
+  }
+
+  -- Orgmode --
+  use {
+    "nvim-orgmode/orgmode",
+    config = function()
+      require('orgmode').setup_ts_grammar{}
+      require('orgmode').setup{}
+    end 
+  }
+
+
   -- Git --
   use "akinsho/git-conflict.nvim"
   use "sindrets/diffview.nvim"
   use "f-person/git-blame.nvim"
   use "lewis6991/gitsigns.nvim"
-  use "tanvirtin/vgit.nvim"
+  -- use "tanvirtin/vgit.nvim"
   use "TimUntersberger/neogit"
   use {
     "pwntester/octo.nvim",
@@ -149,6 +169,9 @@ return packer.startup(function(use)
       require("octo").setup()
     end
   }
+
+  -- Time Tracking --
+  use "wakatime/vim-wakatime"
 
   -- Colorschemes --
   use "sainnhe/sonokai"
@@ -179,12 +202,17 @@ return packer.startup(function(use)
   use "voldikss/fzf-floaterm"
 
   -- File Tree --
+  use {
+    "stevearc/oil.nvim",
+    config = function() require("oil").setup() end
+  }
   use "kyazdani42/nvim-tree.lua"
   -- use "ptzz/lf.vim"
 
   -- Autocompletion --
-  use "hrsh7th/vim-vsnip" -- Snippet engine
-  use "hrsh7th/vim-vsnip-integ" -- Integrations with other vim features
+  -- use "hrsh7th/vim-vsnip" -- Snippet engine
+  -- use "hrsh7th/vim-vsnip-integ" -- Integrations with other vim features
+  use "dcampos/nvim-snippy"
   use "rafamadriz/friendly-snippets" -- Community snippets
   use "hrsh7th/nvim-cmp" -- Autocompletion engine
   -- cmp LSP completion
@@ -201,6 +229,12 @@ return packer.startup(function(use)
   -- Utilities --
   use "chrisbra/unicode.vim" -- Unicode character pickers
 
+  -- Inko --
+  use 'inko-lang/inko.vim'
+
+  -- Nu --
+  use 'LhKipp/nvim-nu'
+
   -- Rust --
   use {
     "ron-rs/ron.vim", -- Rusty Object Notation Syntax
@@ -212,18 +246,38 @@ return packer.startup(function(use)
   }
   use "Saecki/crates.nvim"
 
+  -- TypeScript --
   use {
-    "mickael-menu/zk-nvim",
+    "vuki656/package-info.nvim",
+    requires = {
+      "MunifTanjim/nui.nvim"
+    },
     config = function()
-      require("zk").setup()
+      require('package-info').setup()
     end
   }
+  use { 
+    "klen/nvim-test",
+    config = function()
+      require("nvim-test").setup()
+    end
+  }
+
+  -- use {
+  --   "mickael-menu/zk-nvim",
+  --   config = function()
+  --     require("zk").setup()
+  --   end
+  -- }
   -- use "renerocksai/telekasten.nvim"
 
   -- FlatBuffers --
   use "zchee/vim-flatbuffers"
 
   use "tyru/open-browser.vim"
+
+  -- Random Fun Stuff --
+  use 'eandrju/cellular-automaton.nvim'
 
   -- Automatically set up your configuration after cloning packer.nvim
   -- Put this at the end after all plugins

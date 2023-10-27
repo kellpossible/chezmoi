@@ -1,6 +1,7 @@
-vim.cmd([[
-  let g:gitblame_enabled = 0
-  let g:gitblame_date_format = '%r'
-  let g:gitblame_message_template = "<author> • <date> • <summary>"
-  let g:gitblame_highlight_group = "Question"
-]])
+require('gitblame').setup {
+     --Note how the `gitblame_` prefix is omitted in `setup`
+    enabled = false,
+    date_format = '%r',
+    message_template = "<author> • <date> • <summary>",
+    highlight_group = "Question",
+}

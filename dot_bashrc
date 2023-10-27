@@ -8,21 +8,24 @@
 # eval $(keychain --eval --quiet id_ed25519)
 
 # alias ls='ls --color=auto'
-alias ls='exa'
+alias ls='eza'
 # alias ls='nnn'
 alias neovide='neovide --multigrid'
 alias find='fd'
 alias cat='bat'
 
-# source /usr/share/git/completion/git-prompt.sh
-# PS1='[\u \w\[\033[01;33m\]$(__git_ps1 " (%s)")\[\033[00m\]]\$ '
+function nx() {
+    pnpm nx $@ --skip-nx-cache
+}
 
 # set up mambaforge https://github.com/conda-forge/miniforge 
 [ -f /opt/mambaforge/etc/profile.d/conda.sh ] && source /opt/mambaforge/etc/profile.d/conda.sh
 
-# Poetry package manager environment
-eval "$(starship init bash)"
-eval "$(zoxide init bash)"
+function title(){
+    echo -ne "\033]0; bash - $(basename "$PWD") \007"
+}
+
+starship_precmd_user_func="title"
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
@@ -71,3 +74,13 @@ fzf-git-checkout() {
 
 alias gb='fzf-git-branch'
 alias gco='fzf-git-checkout'
+. "$HOME/.cargo/env"
+
+keychain --quiet id_rsa
+. ~/.keychain/`uname -n`-sh
+
+# [[ -f ~/.bash-preexec.sh ]] && source ~/.bash-preexec.sh
+
+eval "$(starship init bash)"
+eval "$(zoxide init bash)"
+# eval "$(atuin init bash)"

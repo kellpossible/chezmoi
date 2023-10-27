@@ -13,7 +13,9 @@ configs.setup {
   },
   highlight = {
     enable = true, -- false will disable the whole extension
-    disable = { "" }, -- list of language that will be disabled
+    disable = function(lang, bufnr)
+      return vim.api.nvim_buf_line_count(bufnr) > 5000
+    end,
     -- additional_vim_regex_highlighting = {"org"},
     additional_vim_regex_highlighting = true,
   },
@@ -49,4 +51,4 @@ if not status_ok then
   return
 end
 
-install.compilers = { "clang" }
+install.compilers = { "gcc" }

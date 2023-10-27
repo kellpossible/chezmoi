@@ -1,6 +1,3 @@
--- Set shiftwidth based on file type
-vim.cmd [[autocmd FileType lua set shiftwidth=2]]
-
 -- Highlight when yanking
 vim.cmd [[
   augroup highlight_yank

@@ -1,7 +1,7 @@
 mason_lspconfig = require("mason-lspconfig")
 
 mason_lspconfig.setup({
-  ensure_installed = { "sumneko_lua", "rust_analyzer", "tsserver" },
+  ensure_installed = { "rust_analyzer", "tsserver", "graphql" },
 })
 
 -- local codelldb_path = "/usr/bin/codelldb"

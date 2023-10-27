@@ -82,9 +82,15 @@ local normal_mappings = {
     l = { "<cmd>HopLine<CR>", "Hop to line" },
     L = { "<cmd>HopLineStart<CR>", "Hop to line start" },
     m = { "<cmd>lua vim.lsp.buf.format { async = true }<CR>", "Reformat buffer" },
-    n = { ":noh<CR>", "No highlighting" },
+    n = { "<cmd>noh<CR>", "No highlighting" },
+    p = {
+      name = "Copy file path",
+      p = { "<cmd>let @\" = expand(\"%\")<CR>", "Copy relative path to register"},
+      f = { "<cmd>let @\" = expand(\"%:t\")<CR>", "Copy filename to register"},
+      c = { "<cmd>let @+ = expand(\"%\")<CR>", "Copy relative path to system clipboard"},
+    },
     r = { "<cmd>lua vim.lsp.buf.rename()<CR>", "Rename symbol" },
-    R = { ":Rgr<CR>", "Repgrep find and replace" },
+    R = { "<cmd>Rgr<CR>", "Repgrep find and replace" },
     t = {
       name = "Telescope",
       b = { ":Telescope current_buffer_fuzzy_find<CR>", "Fuzzy find in buffer" },
@@ -159,6 +165,7 @@ local normal_mappings = {
     "Hop to previous char",
   },
   ["<F5>"] = { "<cmd>NvimTreeRefresh<CR>", "Refresh file tree" },
+  ["<F6>"] = { "<cmd>NvimTreeFindFile<CR>", "Find file in tree" },
   ["<F12>"] = { "<cmd>FloatermToggle<CR>", "Toggle terminal" },
 }
 
@@ -240,21 +247,21 @@ local terminal_mappings = {
 wk.register(terminal_mappings, { mode = "t" })
 
 -- Clipboard --
--- Copy
--- keymap("v", "<leader>y", "\"+y", opts)
--- keymap("n", "<leader>Y", "\"+yg_", opts)
--- keymap("n", "<leader>y", "\"+y", opts)
--- keymap("n", "<leader>yy", "\"+yy", opts)
--- Paste
--- keymap("n", "<leader>p", "\"+p", opts)
--- keymap("n", "<leader>P", "\"+P", opts)
--- keymap("v", "<leader>p", "\"+p", opts)
--- keymap("v", "<leader>p", "\"+P", opts)
+if vim.g.neovide then
+  vim.cmd([[
+    nmap <C-c> "+y
+    vmap <C-c> "+y
+    nmap <C-v> "+p
+  ]])
+else
+  vim.cmd([[
+    nmap <C-c> "+y
+    vmap <C-c> "+y
+    nmap <C-v> "+p
+  ]])
+end
 
 vim.cmd([[
-  nmap <C-c> "+y
-  vmap <C-c> "+y
-  nmap <C-v> "+p
   inoremap <C-v> <C-r>+
   cnoremap <C-v> <C-r>+
   " use <c-r> to insert original character without triggering things like auto-pairs
