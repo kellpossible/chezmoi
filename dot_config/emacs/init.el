@@ -19,15 +19,15 @@ flycheck rustic lsp-mode f))
 (add-to-list 'load-path "~/.config/emacs/lisp/")
 
 ;; === Smartparens Settings ===
-;; (require 'smartparens-config)
+(require 'smartparens-config)
 
 ;; Handle situation where pressing enter when cursor is betwen braces: 
 ;; 1. {|}
 ;; 2. {
 ;;     |	
 ;; }
-(sp-local-pair 'rustic-mode "{" nil :post-handlers '(:add ("||\n[i]" "RET")))
-(sp-local-pair 'rustic-mode "[" nil :post-handlers '(:add ("||\n[i]" "RET")))
+;; (sp-local-pair 'rustic-mode "{" nil :post-handlers '(:add ("||\n[i]" "RET")))
+;; (sp-local-pair 'rustic-mode "[" nil :post-handlers '(:add ("||\n[i]" "RET")))
 
 ;; === Treemacs Settings ===
 (require 'treemacs)
@@ -171,14 +171,14 @@ If point was already at that position, move point to beginning of line."
 
 
 ;; === Vterm Settings ===
-(require 'vterm)
+;; (require 'vterm)
 
-(add-hook 'vterm-mode-hook
-		(lambda ()
-		(setq-local evil-insert-state-cursor 'box)
-		(evil-insert-state)))
-
-(setq vterm-keymap-exceptions nil)
+;; (add-hook 'vterm-mode-hook
+;; 		(lambda ()
+;; 		(setq-local evil-insert-state-cursor 'box)
+;; 		(evil-insert-state)))
+;;
+;; (setq vterm-keymap-exceptions nil)
 
 ;; === General Editor Settings ===
 (load-theme 'monokai t)
