@@ -214,7 +214,7 @@ local visual_mappings = {
       c = { ":YodeCreateSeditorFloating<CR>", "Create floating editor" },
     },
   },
-  a = { "<cmd>lua vim.lsp.buf.range_code_action()<CR>", "Range code action"},
+  a = { "<cmd>lua vim.lsp.buf.code_action()<CR>", "Range code action"},
   t = {
     "<cmd>lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.AFTER_CURSOR, current_line_only = true })<cr>",
     "Hop to next char",
