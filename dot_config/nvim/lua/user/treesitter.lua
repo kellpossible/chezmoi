@@ -37,12 +37,15 @@ if not status_ok then
 end
 
 treesitter_context.setup {
+  max_lines = 6,
+  min_window_height = 20,
+  multiline_threshold = 3,
   patterns = {
     rust = {
       "enum_item",
       "struct_item",
     }
-  }
+  },
 }
 
 local status_ok, install = pcall(require, "nvim-treesitter.install")
