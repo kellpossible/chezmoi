@@ -10,7 +10,6 @@
 # alias ls='ls --color=auto'
 alias ls='eza'
 # alias ls='nnn'
-alias neovide='neovide --multigrid'
 alias find='fd'
 alias cat='bat'
 
@@ -34,6 +33,23 @@ export NVM_DIR="$HOME/.nvm"
 export EDITOR="nvim"
 
 source /home/luke/.config/broot/launcher/bash/br
+
+fzf-git-diff-checkout-files() {
+    git rev-parse HEAD > /dev/null 2>&1 || return
+   
+    local source_branch
+    source_branch=$(fzf-git-branch $1)
+
+    git diff --name-only $source_branch | fzf -m --preview="git diff ..$source_branch --color=always -- {} | less -R" | while read -r file; do
+        if git show ${source_branch}:${file} >/dev/null 2>&1; then
+            echo "Checkout $file from $source_branch"
+            git checkout $source_branch -- "$file"
+        else
+            echo "Deleting $file"
+            git rm "$file" > /dev/null
+        fi
+    done
+}
 
 fzf-git-branch() {
     git rev-parse HEAD > /dev/null 2>&1 || return
@@ -83,4 +99,5 @@ keychain --quiet id_rsa
 
 eval "$(starship init bash)"
 eval "$(zoxide init bash)"
+eval "$(mcfly init bash)"
 # eval "$(atuin init bash)"
