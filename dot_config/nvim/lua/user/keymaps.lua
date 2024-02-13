@@ -61,6 +61,12 @@ local normal_mappings = {
           t = { "<cmd>GitConflictChooseTheirs<CR>", "Choose theirs" },
       },
       C = { "<cmd>GitBlameOpenCommitURL<CR>", "Open commit blame URL" },
+      l = {
+        name = "Log/History",
+        L = { "<cmd>DiffviewFileHistory %<CR>", "File history diff view"},
+        l = { "<cmd>GV!<CR>", "Commits affecting this file"},
+        b = { "<cmd>GV<CR>", "Commits on this branch"},
+      },
       g = { "<cmd>Neogit<CR>", "Git status" },
       h = { "<cmd>Gitsigns preview_hunk<CR>", "Preview hunk" },
       n = { "<cmd>Gitsigns next_hunk<CR>", "Next hunk" },
@@ -85,10 +91,11 @@ local normal_mappings = {
     n = { "<cmd>noh<CR>", "No highlighting" },
     p = {
       name = "Copy file path",
-      p = { "<cmd>let @\" = expand(\"%\")<CR>", "Copy relative path to register"},
-      f = { "<cmd>let @\" = expand(\"%:t\")<CR>", "Copy filename to register"},
-      c = { "<cmd>let @+ = expand(\"%\")<CR>", "Copy relative path to system clipboard"},
+      p = { "<cmd>let @\" = expand(\"%\")<CR>", "Copy relative path to register" },
+      f = { "<cmd>let @\" = expand(\"%:t\")<CR>", "Copy filename to register" },
+      c = { "<cmd>let @+ = expand(\"%\")<CR>", "Copy relative path to system clipboard" },
     },
+    P = { "<cmd>!prettier -w %<CR>", "Reformat buffer with prettier" },
     r = { "<cmd>lua vim.lsp.buf.rename()<CR>", "Rename symbol" },
     R = { "<cmd>Rgr<CR>", "Repgrep find and replace" },
     t = {

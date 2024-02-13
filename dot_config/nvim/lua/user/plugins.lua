@@ -147,7 +147,10 @@ return packer.startup(function(use)
   use "theHamsta/nvim-dap-virtual-text"
 
   -- Text Editing --
-  use "fedepujol/move.nvim" -- Move blocks of text
+  use {
+    "fedepujol/move.nvim", -- Move blocks of text
+    config = function() require("move").setup({}) end
+  }
   use "mg979/vim-visual-multi"
   use "windwp/nvim-autopairs"
 
@@ -176,19 +179,21 @@ return packer.startup(function(use)
   use "sindrets/diffview.nvim"
   use "f-person/git-blame.nvim"
   use "lewis6991/gitsigns.nvim"
+  use "junegunn/gv.vim"
+  use "tpope/vim-fugitive"
   -- use "tanvirtin/vgit.nvim"
   use "TimUntersberger/neogit"
-  use {
-    "pwntester/octo.nvim",
-    requires = {
-      'nvim-lua/plenary.nvim',
-      'nvim-telescope/telescope.nvim',
-      'kyazdani42/nvim-web-devicons',
-    },
-    config = function ()
-      require("octo").setup()
-    end
-  }
+  -- use {
+  --   "pwntester/octo.nvim",
+  --   requires = {
+  --     'nvim-lua/plenary.nvim',
+  --     'nvim-telescope/telescope.nvim',
+  --     'kyazdani42/nvim-web-devicons',
+  --   },
+  --   config = function ()
+  --     require("octo").setup()
+  --   end
+  -- }
 
   -- Time Tracking --
   use "wakatime/vim-wakatime"
