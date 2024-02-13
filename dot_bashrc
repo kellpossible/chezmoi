@@ -34,6 +34,10 @@ export EDITOR="nvim"
 
 source /home/luke/.config/broot/launcher/bash/br
 
+# Used for checking out files from another branch which have changed when
+# diffing compared to the current branch. Uses fzf to select a subset of these
+# changed files, which can facilitate a workflow of splitting a branch up for
+# review.
 fzf-git-diff-checkout-files() {
     git rev-parse HEAD > /dev/null 2>&1 || return
    
@@ -51,6 +55,8 @@ fzf-git-diff-checkout-files() {
     done
 }
 
+# Use fzf to select and return a local git branch. Branches are sorted by the
+# date of their most recent commit.
 fzf-git-branch() {
     git rev-parse HEAD > /dev/null 2>&1 || return
 
@@ -67,7 +73,7 @@ fzf-git-branch() {
         sed "s/.* //"
 }
 
-
+# use fzf to checkout a git branch.
 fzf-git-checkout() {
     git rev-parse HEAD > /dev/null 2>&1 || return
 
