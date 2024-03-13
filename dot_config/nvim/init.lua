@@ -1,6 +1,7 @@
 require("user.options")
 require("user.plugins")
 require("user.mason")
+require("user.neoconf")
 
 require("user.dap")
 require("user.titlestring")
