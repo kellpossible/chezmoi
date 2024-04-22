@@ -48,13 +48,14 @@ return packer.startup(function(use)
   -- Utility Libraries --
   use "nvim-lua/popup.nvim" -- An implementation of the Popup API from vim in Neovim
   use "nvim-lua/plenary.nvim" -- Useful lua functions used ny lots of plugins
+  use "nvim-neotest/nvim-nio"
 
   -- UI Improvements --
   use "stevearc/dressing.nvim" -- Reskin a bunch of UI elements
   use "rcarriga/nvim-notify" -- Popup notifications
   use "folke/which-key.nvim" -- Help messages for keyboard shortcuts
   use "phaazon/hop.nvim" -- Jump around document using keyboard
-  use "kyazdani42/nvim-web-devicons"
+  use "nvim-tree/nvim-web-devicons"
   use "drzel/vim-gui-zoom" -- Zoom for neovide
   use "karb94/neoscroll.nvim" -- Smooth scroll
   -- use "noib3/nvim-cokeline" -- Bufferline
@@ -171,7 +172,6 @@ return packer.startup(function(use)
   use {
     "nvim-orgmode/orgmode",
     config = function()
-      require('orgmode').setup_ts_grammar{}
       require('orgmode').setup{}
     end 
   }
