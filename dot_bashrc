@@ -32,8 +32,6 @@ export NVM_DIR="$HOME/.nvm"
 
 export EDITOR="nvim"
 
-source /home/luke/.config/broot/launcher/bash/br
-
 # Used for checking out files from another branch which have changed when
 # diffing compared to the current branch. Uses fzf to select a subset of these
 # changed files, which can facilitate a workflow of splitting a branch up for
@@ -98,7 +96,7 @@ alias gb='fzf-git-branch'
 alias gco='fzf-git-checkout'
 . "$HOME/.cargo/env"
 
-keychain --quiet id_rsa
+keychain --quiet id_ed25519
 . ~/.keychain/`uname -n`-sh
 
 # [[ -f ~/.bash-preexec.sh ]] && source ~/.bash-preexec.sh
