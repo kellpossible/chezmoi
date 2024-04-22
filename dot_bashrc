@@ -103,6 +103,9 @@ keychain --quiet id_rsa
 
 # [[ -f ~/.bash-preexec.sh ]] && source ~/.bash-preexec.sh
 
+. "$HOME/.asdf/asdf.sh"
+. "$HOME/.asdf/completions/asdf.bash"
+
 eval "$(starship init bash)"
 eval "$(zoxide init bash)"
 eval "$(mcfly init bash)"
