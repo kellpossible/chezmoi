@@ -1,5 +1,5 @@
 require("user.options")
-require("user.plugins")
+require("user.lazy")
 require("user.mason")
 -- require("user.neoconf") -- broken
 
@@ -7,12 +7,8 @@ require("user.dap")
 require("user.titlestring")
 require("user.notify")
 require("user.lsp")
-require("user.treesitter")
 require("user.colorscheme")
-require("user.hop")
 require("user.trouble")
-require("user.telescope")
-require("user.fzf")
 require("user.comment")
 require("user.commands")
 -- require("user.vsnip")
@@ -32,13 +28,11 @@ require("user.todo-comments")
 require("user.rust")
 require("user.browser")
 require("user.scroll")
-require("user.harpoon")
 -- require("user.chatgpt")
 
 -- require("user.cokeline")
 -- require("user.lualine")
 require("user.statusline") -- broken https://github.com/nvim-lua/lsp-status.nvim/issues/79
-
 require("user.keymaps")
 
 if vim.g.neovide then
@@ -46,5 +40,5 @@ if vim.g.neovide then
 end
 
 -- Un-cache lua files in "user" directory
-require('plenary.reload').reload_module('user', true)
+-- require('plenary.reload').reload_module('user', true)
 

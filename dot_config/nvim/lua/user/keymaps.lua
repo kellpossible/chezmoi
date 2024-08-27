@@ -4,8 +4,6 @@ local keymap = vim.api.nvim_set_keymap
 
 -- Remap space key as the leader key
 keymap("", "<Space>", "<Nop>", opts)
-vim.g.mapleader = " "
-vim.g.maplocalleader = " "
 
 -- Setup which-key
 local wk = require("which-key")
