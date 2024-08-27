@@ -1,7 +1,7 @@
 require("user.options")
 require("user.plugins")
 require("user.mason")
-require("user.neoconf")
+-- require("user.neoconf") -- broken
 
 require("user.dap")
 require("user.titlestring")
@@ -33,7 +33,7 @@ require("user.rust")
 require("user.browser")
 require("user.scroll")
 require("user.harpoon")
-require("user.chatgpt")
+-- require("user.chatgpt")
 
 -- require("user.cokeline")
 -- require("user.lualine")

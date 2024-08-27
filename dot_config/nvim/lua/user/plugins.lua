@@ -60,12 +60,6 @@ return packer.startup(function(use)
   use "karb94/neoscroll.nvim" -- Smooth scroll
   -- use "noib3/nvim-cokeline" -- Bufferline
   use {
-    "hoschi/yode-nvim", -- Focused code editing
-    config = function()
-      require('yode-nvim').setup({})
-    end
-  }
-  use {
     "danilamihailov/beacon.nvim", -- Highlight cursor jumps
     config = function()
       -- Not required for neovide because it already has the animated cursor
@@ -137,7 +131,6 @@ return packer.startup(function(use)
   use "jose-elias-alvarez/null-ls.nvim"
   use "ray-x/lsp_signature.nvim"
   use "onsails/lspkind-nvim"
-  use "weilbith/nvim-code-action-menu"
   use "nvim-lua/lsp-status.nvim"
   use {
     'nvim-lualine/lualine.nvim',
