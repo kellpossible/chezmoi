@@ -185,6 +185,7 @@ check_and_install \
 	fuse \
 	automake \
 	autoconf \
+    pkg-config \
 	libssl-dev \
 	libncurses-dev \
 	mosh \
