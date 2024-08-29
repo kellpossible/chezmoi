@@ -43,7 +43,7 @@ return {
         mark_branch = true,
       },
       menu = {
-        width = 80,
+        width = 60,
       },
     }
   },
@@ -293,7 +293,7 @@ return {
   -- Time Tracking --
   "wakatime/vim-wakatime",
 
-  -- Colorschemes --
+  -- Colorschemes/Theme --
   "sainnhe/sonokai",
   "rebelot/kanagawa.nvim",
 
