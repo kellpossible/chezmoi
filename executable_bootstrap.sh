@@ -186,7 +186,9 @@ check_and_install \
 	automake \
 	autoconf \
 	libssl-dev \
-	libncurses-dev
+	libncurses-dev \
+	mosh \
+	fzf
 
 if [ ! -e ~/.ssh/id_ed25519.pub ]; then
 	echo ~/.ssh/id_ed25519.pub does not exist. Creating ssh key
@@ -234,6 +236,13 @@ if command -v "fd" &> /dev/null; then
 else
     echo "Installing fd."
     cargo install --locked "fd-find"
+fi
+
+if command -v "delta" &> /dev/null; then
+    echo "delta already installed."
+else
+    echo "Installing delta."
+    cargo install --locked "git-delta"
 fi
 
 if rustup component list | grep -q 'rust-analyzer-x86_64-unknown-linux-gnu (installed)' &> /dev/null; then
