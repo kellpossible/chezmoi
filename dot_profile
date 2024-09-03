@@ -31,4 +31,9 @@ if [ -d "$HOME/.fly/bin" ] ; then
     export PATH="$HOME/.fly/bin:$PATH"
 fi
 
+# set PATH so it includes go if it exists
+if [ -d "/usr/local/go/bin" ] ; then
+    export PATH=$PATH:/usr/local/go/bin
+fi
+
 . "$HOME/.cargo/env"

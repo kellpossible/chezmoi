@@ -321,5 +321,14 @@ else
     curl -L https://fly.io/install.sh | sh
 fi
 
+
+if command -v "go" &> /dev/null; then
+    echo "go already installed."
+else
+    echo "installing go"
+    wget -qO- https://go.dev/dl/go1.23.0.linux-amd64.tar.gz | sudo tar -C /usr/local -xzf -
+    . ~/.profile
+fi
+
 download_and_verify https://github.com/neovim/neovim/releases/download/v0.10.1/nvim.appimage ~/.local/bin/nvim "c4762d54cadfd9fa4497c7969197802c9cf9e0d926c39e561f0bd170e36c8aa0" 
 chmod u+x ~/.local/bin/nvim
