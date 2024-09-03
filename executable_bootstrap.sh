@@ -230,7 +230,10 @@ cargo_install \
 	starship \
 	mcfly \
 	eza \
-	bat
+	bat \
+    just \
+    dua-cli \
+    cargo-cache
 
 if command -v "fd" &> /dev/null; then
     echo "fd already installed."
@@ -332,3 +335,8 @@ fi
 
 download_and_verify https://github.com/neovim/neovim/releases/download/v0.10.1/nvim.appimage ~/.local/bin/nvim "c4762d54cadfd9fa4497c7969197802c9cf9e0d926c39e561f0bd170e36c8aa0" 
 chmod u+x ~/.local/bin/nvim
+
+# Cleanup
+echo "Cleaning cargo caches after installs"
+cargo cache -r all
+
