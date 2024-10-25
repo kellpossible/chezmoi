@@ -191,7 +191,12 @@ check_and_install \
 	flyctl \
 	iterm2 \
     font-fira-code-nerd-font \
-    visual-studio-code
+    visual-studio-code \
+    docker \
+    docker-buildx \
+    docker-compose
+
+docker buildx install
 
 if [ ! -e ~/.ssh/id_ed25519.pub ]; then
 	echo ~/.ssh/id_ed25519.pub does not exist. Creating ssh key
@@ -214,6 +219,15 @@ else
 	echo ~/.local/share/chezmoi already exists. Configs probably already initialized.
 fi
 
+
+if [ ! -e ~/.docker/cli-plugins/docker-compose ]; then
+	echo ~/.docker/cli-plugins/docker-compose does not exist. Setting up docker compose plugin.
+    mkdir -p ~/.docker/cli-plugins
+    ln -sfn $HOMEBREW_PREFIX/opt/docker-compose/bin/docker-compose ~/.docker/cli-plugins/docker-compose
+else
+	echo ~/.docker/cli-plugins/docker-compose already exists. Docker compose plugin already installed.
+fi
+
 . ~/.bashrc
 
 if [ ! -d ~/.cargo ]; then
@@ -233,7 +247,8 @@ cargo_install \
 	bat \
     just \
     dua-cli \
-    cargo-cache
+    cargo-cache \
+    mprocs
 
 if command -v fd &> /dev/null; then
     echo "fd already installed."
