@@ -1,0 +1,6 @@
+[user]
+name = "Luke Frisken"
+email = "l.frisken@gmail.com"
+
+[git]
+subprocess = true
