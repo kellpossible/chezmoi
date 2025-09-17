@@ -4,3 +4,19 @@ email = "l.frisken@gmail.com"
 
 [git]
 subprocess = true
+
+[ui]
+editor = "nvim"
+diff-formatter = ":git" # required by `delta`
+pager=["delta", "--pager", "less -FRX"] # Keeps output from the terminal after closing the pager
+
+[diff]
+tool = "delta"
+
+# These options allow for `jj diff` and `jj show` to clear the output from the terminal after closing the pager.
+[[--scope]]
+--when.commands = ["diff", "show"]
+
+[--scope.ui]
+pager = "delta"
+diff-formatter = "delta"
