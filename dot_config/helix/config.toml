@@ -1,4 +1,4 @@
-theme = "monokai"
+theme = "sonokai"
 
 [editor]
 
@@ -7,7 +7,8 @@ insert = "bar"
 normal = "block"
 select = "block"
 
-[editor.whitespace.render]
-space = "none"
-tab = "all"
-newline = "none"
+[editor.whitespace]
+render = "none"
+
+[keys.normal.space]
+x = ":toggle whitespace.render all none"
