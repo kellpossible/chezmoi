@@ -3,242 +3,196 @@ name: rust-proptest
 description: Help users write property-based tests in Rust using proptest. Covers strategies, shrinking, composition, and the proptest-derive macro for testing arbitrary inputs.
 ---
 
-# Proptest Property-Based Testing Skill
+# Rust Proptest Property Testing
 
-This skill helps you write property-based tests in Rust using the proptest library. Property testing validates that certain properties hold for arbitrary inputs, automatically generating test cases and shrinking failures to minimal examples.
+This skill helps you write effective property-based tests in Rust using the proptest library. Property testing generates random inputs to verify that certain properties of your code hold for arbitrary inputs.
 
-## When to Use This Skill
+## When to Use Property Testing
 
-- Writing property-based tests that check invariants across many inputs
-- Creating custom strategies for generating test data
-- Composing complex strategies from simpler ones
-- Using proptest-derive to generate arbitrary values for custom types
-- Debugging shrinking behavior or understanding test failures
+Property testing complements traditional unit testing:
+- **Traditional tests**: Specific edge cases, simple inputs, known bugs
+- **Property tests**: Complex inputs that expose unexpected problems
 
-## Core Concepts
+Use property testing when you can express invariants about your code's behavior that should hold for all valid inputs.
 
-**Property Testing**: Instead of testing specific inputs, you define properties that should hold for all inputs. Proptest generates random inputs and when a failure occurs, automatically shrinks to the minimal failing case.
+## Quick Start
 
-**Strategy**: Defines how to generate and shrink values. Strategies are composable building blocks.
-
-**Shrinking**: The process of reducing a failing input to its simplest form while maintaining the failure.
-
-## Basic Setup
-
-Add to `Cargo.toml`:
-```toml
-[dev-dependencies]
-proptest = "1.9.0"
-```
-
-For derive support, also add:
-```toml
-[dev-dependencies]
-proptest-derive = "0.2.0"
-```
-
-## Quick Start Example
+### Basic Test Structure
 
 ```rust
 use proptest::prelude::*;
 
 proptest! {
     #[test]
-    fn parses_all_valid_dates(s in "[0-9]{4}-[0-9]{2}-[0-9]{2}") {
-        // Test that all strings matching YYYY-MM-DD format parse successfully
-        parse_date(&s).unwrap();
+    fn test_name(input in strategy) {
+        // Your test assertions here
+        prop_assert!(condition);
+    }
+}
+```
+
+### Common Input Strategies
+
+```rust
+proptest! {
+    #[test]
+    fn test_integers(x in 0..100i32) {
+        // x is between 0 (inclusive) and 100 (exclusive)
     }
 
     #[test]
-    fn addition_commutative(a in 0..1000i32, b in 0..1000i32) {
-        prop_assert_eq!(a + b, b + a);
+    fn test_strings(s in "[a-z]{1,10}") {
+        // s matches the regex: 1-10 lowercase letters
+    }
+
+    #[test]
+    fn test_arbitrary(data in any::<Vec<String>>()) {
+        // data is an arbitrary Vec<String>
     }
 }
 ```
 
 **Reference**: [Getting Started Guide](https://altsysrq.github.io/proptest-book/proptest/getting-started.html)
 
-## Built-in Strategies
+## Strategy Composition
 
-### Numeric Ranges
-```rust
-0..100i32           // i32 from 0 to 99
-0.0..1.0f64         // f64 from 0.0 to 1.0
-any::<u32>()        // Any u32 value
-```
+One of proptest's strengths is composing simple strategies into complex ones.
 
-### Strings and Regex
-```rust
-"[a-z]{3,10}"                    // 3-10 lowercase letters
-"\\PC*"                          // Any printable characters
-string_regex("[0-9]+").unwrap()  // Explicit regex strategy
-```
+### Combining Strategies with `prop_map`
 
-### Collections
-```rust
-vec(0..100i32, 0..10)            // Vec of 0-9 elements, each 0-99
-prop::collection::vec(any::<u8>(), 10..20)  // 10-19 u8 values
-prop::collection::hash_set(0..100, 5)       // HashSet with exactly 5 elements
-```
-
-### Options and Results
-```rust
-prop::option::of(0..100i32)      // Option<i32>
-prop::result::maybe_ok(0..100, "error")  // Result<i32, &str>
-```
-
-**Reference**: [Strategy Documentation](https://docs.rs/proptest/latest/proptest/strategy/index.html)
-
-## Composing Strategies
-
-### Using `prop_map` - Transform Generated Values
+Transform a strategy's output to another type:
 
 ```rust
 use proptest::prelude::*;
 
-// Generate even numbers by transforming
-let even_numbers = any::<i32>().prop_map(|x| x / 2 * 2);
+// Generate even numbers by transforming any u32
+let even_numbers = any::<u32>().prop_map(|x| x / 2 * 2);
 
-// Generate custom types
-#[derive(Debug, Clone)]
+// Generate tuples and map to a struct
+#[derive(Debug)]
 struct Point { x: i32, y: i32 }
 
-fn point_strategy() -> impl Strategy<Value = Point> {
-    (0..100i32, 0..100i32)
-        .prop_map(|(x, y)| Point { x, y })
+let point_strategy = (0..100i32, 0..100i32)
+    .prop_map(|(x, y)| Point { x, y });
+```
+
+**Prefer `prop_map` over filtering** when possible - it's more efficient and shrinks better.
+
+**Reference**: [Strategy trait documentation](https://docs.rs/proptest/latest/proptest/strategy/trait.Strategy.html#method.prop_map)
+
+### Filtering with `prop_filter`
+
+Use filtering sparingly for rare conditions:
+
+```rust
+// Only when you can't express it as a transformation
+let non_zero = any::<i32>().prop_filter("non-zero", |x| *x != 0);
+
+// Better approach: combine ranges
+let non_zero_better = prop_oneof![
+    i32::MIN..0,
+    1..=i32::MAX,
+];
+```
+
+**Warning**: Excessive filtering hurts performance and shrinking quality.
+
+**Reference**: [Strategy::prop_filter](https://docs.rs/proptest/latest/proptest/strategy/trait.Strategy.html#method.prop_filter)
+
+### Flat Mapping for Dependent Values
+
+Use `prop_flat_map` when one value depends on another:
+
+```rust
+// Generate a vector and an index into it
+let vec_with_index = prop::collection::vec(any::<i32>(), 1..100)
+    .prop_flat_map(|vec| {
+        let len = vec.len();
+        (Just(vec), 0..len)
+    });
+
+// Generate a range where end > start
+let valid_range = (0..100i32).prop_flat_map(|start| {
+    (Just(start), start..100)
+});
+```
+
+**Reference**: [Strategy::prop_flat_map](https://docs.rs/proptest/latest/proptest/strategy/trait.Strategy.html#method.prop_flat_map)
+
+### Tuple Strategies
+
+Tuples of strategies automatically become strategies for tuples:
+
+```rust
+// All fields generated independently
+let triple_strategy = (0..10, 100..200, "a|b|c");
+
+proptest! {
+    #[test]
+    fn test_tuple((a, b, c) in (0..10, 100..200, "a|b|c")) {
+        assert!(a < 10);
+        assert!(b >= 100);
+        assert!(c == "a" || c == "b" || c == "c");
+    }
 }
 ```
 
-### Using `prop_flat_map` - Dependent Strategies
+## Higher-Order Strategies
 
-When the second strategy depends on the first value:
+Higher-order strategies create strategies based on runtime values or combine multiple strategies.
+
+### `prop_oneof!` - Union of Strategies
+
+Select from multiple strategies with optional weights:
 
 ```rust
 use proptest::prelude::*;
 
-// Generate a vec and an index into it
-fn vec_and_index() -> impl Strategy<Value = (Vec<i32>, usize)> {
-    prop::collection::vec(any::<i32>(), 1..100)
-        .prop_flat_map(|vec| {
-            let len = vec.len();
-            (Just(vec), 0..len)
-        })
-}
-
-// Generate ranges where end > start
-fn valid_range() -> impl Strategy<Value = (i32, i32)> {
-    (0..1000i32).prop_flat_map(|start| {
-        (Just(start), start..1000)
-    })
-}
-```
-
-**Reference**: [prop_map docs](https://docs.rs/proptest/latest/proptest/strategy/trait.Strategy.html#method.prop_map), [prop_flat_map docs](https://docs.rs/proptest/latest/proptest/strategy/trait.Strategy.html#method.prop_flat_map)
-
-### Using `prop_filter` - Constrain Values
-
-**Warning**: Filtering is inefficient and interferes with shrinking. Use sparingly.
-
-```rust
-use proptest::prelude::*;
-
-// Filter for prime-ish numbers (prefer prop_map when possible)
-let filtered = (2..1000u32)
-    .prop_filter("not divisible by 2", |x| x % 2 != 0);
-
-// Better approach - generate directly
-let odd_numbers = any::<u32>().prop_map(|x| x * 2 + 1);
-```
-
-**Reference**: [prop_filter docs](https://docs.rs/proptest/latest/proptest/strategy/trait.Strategy.html#method.prop_filter)
-
-### Using `prop_oneof!` - Choose Between Strategies
-
-```rust
-use proptest::prelude::*;
-
-// Generate either small or large numbers (rarely medium)
-let bimodal = prop_oneof![
-    3 => 0..10i32,      // 30% weight
-    7 => 1000..1100,    // 70% weight
+// Equal probability
+let mixed_ints = prop_oneof![
+    0..10,
+    100..200,
+    1000..2000,
 ];
 
-// Generate different enum variants
-fn json_value() -> impl Strategy<Value = JsonValue> {
-    prop_oneof![
-        any::<i64>().prop_map(JsonValue::Number),
-        ".*".prop_map(JsonValue::String),
-        Just(JsonValue::Null),
-    ]
-}
+// Weighted - generate small numbers 70% of the time
+let mostly_small = prop_oneof![
+    7 => 0..10,
+    2 => 100..1000,
+    1 => 10000..100000,
+];
 ```
 
 **Reference**: [prop_oneof! macro](https://docs.rs/proptest/latest/proptest/macro.prop_oneof.html)
 
-## Compound Strategies - Building Complex Types
+### Collection Strategies
 
-### Tuples
-
-Tuples automatically become strategies when all elements are strategies:
+Generate collections with constraints:
 
 ```rust
-use proptest::prelude::*;
+use proptest::collection::*;
 
-proptest! {
-    #[test]
-    fn test_with_tuple(
-        (name, age, active) in ("[a-z]{3,10}", 0..120u8, any::<bool>())
-    ) {
-        // name is String, age is u8, active is bool
-        println!("{} is {} years old, active: {}", name, age, active);
-    }
-}
+// Vec with size range
+let small_vecs = vec(any::<i32>(), 0..10);
+
+// HashMap with specific size
+let maps = hash_map("[a-z]+", 0..100i32, 5..20);
+
+// Sets with minimum size
+let sets = hash_set(any::<String>(), 10..100);
+
+// Fixed-size arrays
+let arrays = uniform32(0u8..255);
 ```
 
-### Structs with `prop_compose!`
-
-```rust
-use proptest::prelude::*;
-
-#[derive(Debug, Clone)]
-struct User {
-    name: String,
-    age: u8,
-    email: String,
-}
-
-prop_compose! {
-    fn user_strategy()
-        (name in "[a-z]{3,10}",
-         age in 18..100u8,
-         domain in "(gmail|yahoo|hotmail)\\.com")
-        -> User {
-        User {
-            name: name.clone(),
-            age,
-            email: format!("{}@{}", name, domain),
-        }
-    }
-}
-
-proptest! {
-    #[test]
-    fn test_user(user in user_strategy()) {
-        assert!(user.age >= 18);
-        assert!(user.email.contains('@'));
-    }
-}
-```
-
-**Reference**: [prop_compose! docs](https://docs.rs/proptest/latest/proptest/macro.prop_compose.html)
+**Reference**: [proptest::collection module](https://docs.rs/proptest/latest/proptest/collection/index.html)
 
 ### Recursive Strategies
 
-For tree-like structures, use `prop::strategy::LazyJust` and `BoxedStrategy`:
+Use `prop_recursive` for tree-like structures:
 
 ```rust
 use proptest::prelude::*;
-use proptest::strategy::BoxedStrategy;
 
 #[derive(Debug, Clone)]
 enum Tree {
@@ -246,347 +200,280 @@ enum Tree {
     Node(Box<Tree>, Box<Tree>),
 }
 
-fn tree_strategy() -> BoxedStrategy<Tree> {
+fn tree_strategy() -> impl Strategy<Value = Tree> {
     let leaf = any::<i32>().prop_map(Tree::Leaf);
 
     leaf.prop_recursive(
-        8,    // depth
-        256,  // max nodes
-        10,   // items per collection
+        8,   // max depth
+        256, // max nodes
+        10,  // items per collection
         |inner| {
             (inner.clone(), inner)
                 .prop_map(|(l, r)| Tree::Node(Box::new(l), Box::new(r)))
         }
-    ).boxed()
+    )
 }
 ```
 
-**Reference**: [Recursive Strategies](https://docs.rs/proptest/latest/proptest/strategy/trait.Strategy.html#method.prop_recursive)
+**Reference**: [Strategy::prop_recursive](https://docs.rs/proptest/latest/proptest/strategy/trait.Strategy.html#method.prop_recursive)
 
-## Using `proptest-derive`
+### `Just` and `LazyJust`
 
-The derive macro automatically generates `Arbitrary` implementations:
+Create strategies for constant or lazily-computed values:
 
-### Basic Derive
+```rust
+use proptest::strategy::Just;
+
+// Constant value
+let always_42 = Just(42);
+
+// Lazily computed (useful for expensive or non-Clone values)
+let lazy_vec = LazyJust::new(|| vec![1, 2, 3, 4, 5]);
+
+// Combine with other strategies
+let with_constant = (0..10, Just("constant")).prop_map(|(n, s)| {
+    format!("{}: {}", s, n)
+});
+```
+
+**Reference**: [Just](https://docs.rs/proptest/latest/proptest/strategy/struct.Just.html) and [LazyJust](https://docs.rs/proptest/latest/proptest/strategy/struct.LazyJust.html)
+
+## The `proptest-derive` Macro
+
+The `#[derive(Arbitrary)]` macro automatically generates strategies for custom types.
+
+### Basic Usage
+
+Add to `Cargo.toml`:
+```toml
+[dev-dependencies]
+proptest-derive = "0.2.0"
+```
+
+Then derive on your types:
 
 ```rust
 use proptest_derive::Arbitrary;
 
 #[derive(Debug, Arbitrary)]
-struct Point {
-    x: i32,
-    y: i32,
+struct User {
+    name: String,
+    age: u8,
+    email: String,
 }
 
-// Now can use: any::<Point>()
+// Now you can use any::<User>() in tests
+proptest! {
+    #[test]
+    fn test_user(user in any::<User>()) {
+        // user is automatically generated
+    }
+}
 ```
 
-### Modifiers
+**Reference**: [proptest-derive guide](https://altsysrq.github.io/proptest-book/proptest-derive/getting-started.html)
+
+### Field-Level Customization
+
+Use `#[proptest(...)]` attributes to customize individual fields:
 
 ```rust
-use proptest_derive::Arbitrary;
-
 #[derive(Debug, Arbitrary)]
 struct Config {
-    // Fixed value
-    #[proptest(value = "0")]
-    counter: u64,
-
     // Custom strategy
-    #[proptest(strategy = "1..100")]
-    port: u16,
+    #[proptest(strategy = "1..=100")]
+    timeout_seconds: u32,
 
     // Regex pattern
     #[proptest(regex = "[a-z]{3,10}")]
     name: String,
 
-    // Filter (use sparingly)
+    // Fixed value
+    #[proptest(value = "true")]
+    enabled: bool,
+
+    // Filter (use sparingly!)
     #[proptest(filter = "|x| x % 2 == 0")]
-    even_number: u32,
+    even_number: i32,
 }
 ```
 
-### Enum Variants
+**Reference**: [Modifier reference](https://altsysrq.github.io/proptest-book/proptest-derive/modifiers.html)
+
+### Enum Strategies
+
+Control variant generation with weights and skip:
 
 ```rust
-use proptest_derive::Arbitrary;
-
 #[derive(Debug, Arbitrary)]
 enum Message {
-    // Skip certain variants
-    #[proptest(skip)]
-    Internal,
+    // Default weight is 1
+    Ping,
 
-    // Weight variants differently
+    // 3x more likely than Ping
     #[proptest(weight = 3)]
-    Text(String),
+    Data(Vec<u8>),
 
-    #[proptest(weight = 1)]
-    Image { url: String, width: u32, height: u32 },
+    // Never generate this variant
+    #[proptest(skip)]
+    Internal(std::fs::File),
+
+    // Custom strategy for whole variant
+    #[proptest(strategy = "\"[A-Z][a-z]+\".prop_map(Message::Name)")]
+    Name(String),
 }
 ```
 
-### With Parameters
+**Reference**: [Modifier reference - weight and skip](https://altsysrq.github.io/proptest-book/proptest-derive/modifiers.html#weight)
+
+### Parameters for Complex Types
+
+Use `params` to parameterize generation:
 
 ```rust
-use proptest_derive::Arbitrary;
-
 #[derive(Debug)]
-struct WidgetRange(usize, usize);
+struct Range(usize, usize);
 
-impl Default for WidgetRange {
-    fn default() -> Self { Self(0, 100) }
+impl Default for Range {
+    fn default() -> Self { Range(0, 100) }
 }
 
 #[derive(Debug, Arbitrary)]
-#[proptest(params(WidgetRange))]
-struct WidgetCollection {
+#[proptest(params(Range))]
+struct DataSet {
     #[proptest(strategy = "params.0..=params.1")]
-    count: usize,
+    size: usize,
+    data: Vec<u8>,
 }
 
-// Use with: any_with::<WidgetCollection>(WidgetRange(10, 20))
-```
-
-**Reference**: [proptest-derive guide](https://altsysrq.github.io/proptest-book/proptest-derive/index.html), [Modifier Reference](https://altsysrq.github.io/proptest-book/proptest-derive/modifiers.html)
-
-## Higher-Order Strategies
-
-### Creating Strategy Factories
-
-```rust
-use proptest::prelude::*;
-
-// Function that returns a strategy based on parameters
-fn bounded_vec_strategy<T: Strategy>(
-    element: T,
-    min: usize,
-    max: usize
-) -> impl Strategy<Value = Vec<T::Value>>
-where
-    T::Value: std::fmt::Debug,
-{
-    prop::collection::vec(element, min..=max)
-}
-
-// Use it
+// Use with any_with
 proptest! {
     #[test]
-    fn test_small_vecs(v in bounded_vec_strategy(0..100i32, 0, 5)) {
-        assert!(v.len() <= 5);
+    fn test_dataset(ds in any_with::<DataSet>(Range(10, 50))) {
+        assert!(ds.size >= 10 && ds.size <= 50);
     }
 }
 ```
 
-### Combining Multiple Strategies
+**Reference**: [params modifier](https://altsysrq.github.io/proptest-book/proptest-derive/modifiers.html#params)
 
-```rust
-use proptest::prelude::*;
+### Common Derive Errors
 
-fn any_collection<T: Strategy>(element: T)
-    -> impl Strategy<Value = Collection<T::Value>>
-where
-    T::Value: std::fmt::Debug + Clone,
-{
-    prop_oneof![
-        prop::collection::vec(element.clone(), 0..10)
-            .prop_map(Collection::Vec),
-        prop::collection::hash_set(element.clone(), 0..10)
-            .prop_map(|s| Collection::Set(s.into_iter().collect())),
-        prop::collection::btree_set(element, 0..10)
-            .prop_map(|s| Collection::Ordered(s.into_iter().collect())),
-    ]
-}
-```
+- **E0001**: Can't derive on types with lifetime parameters (GATs not yet stable)
+- **E0008**: Can't skip struct fields - use `#[proptest(value = "expr")]` instead
+- **E0025**: Can't use `strategy`, `value`, and `regex` together - pick one
 
-## Testing Best Practices
-
-### Assertions
-
-Use `prop_assert!` macros instead of `assert!` to get better error messages:
-
-```rust
-use proptest::prelude::*;
-
-proptest! {
-    #[test]
-    fn test_properties(x in 0..100i32) {
-        prop_assert!(x >= 0);                    // Basic assertion
-        prop_assert_eq!(x * 2 / 2, x);          // Equality
-        prop_assert_ne!(x, x + 1);              // Inequality
-    }
-}
-```
-
-### Configuration
-
-```rust
-use proptest::prelude::*;
-
-proptest! {
-    #![proptest_config(ProptestConfig {
-        cases: 1000,           // Run 1000 test cases (default: 256)
-        max_shrink_iters: 10000,  // More shrinking iterations
-        .. ProptestConfig::default()
-    })]
-
-    #[test]
-    fn expensive_test(x in any::<u32>()) {
-        // This test will run 1000 times
-    }
-}
-```
-
-### Forking and Timeouts
-
-For tests that might panic or hang:
-
-```rust
-use proptest::prelude::*;
-
-proptest! {
-    #![proptest_config(ProptestConfig {
-        fork: true,
-        timeout: 1000,  // 1 second timeout
-        .. ProptestConfig::default()
-    })]
-
-    #[test]
-    fn potentially_hanging_test(n in 0..100u64) {
-        expensive_operation(n);
-    }
-}
-```
-
-**Reference**: [Forking and Timeouts](https://altsysrq.github.io/proptest-book/proptest/forking.html)
-
-## Failure Persistence
-
-Proptest automatically saves failing test cases to `proptest-regressions/` directory:
-
-```bash
-# Add to version control
-git add proptest-regressions
-```
-
-Failed cases are replayed on subsequent test runs before generating new cases. This ensures regressions are caught.
-
-**Reference**: [Failure Persistence](https://altsysrq.github.io/proptest-book/proptest/failure-persistence.html)
+**Reference**: [Error index](https://altsysrq.github.io/proptest-book/proptest-derive/errors.html)
 
 ## Common Patterns
 
-### Testing Encode/Decode Round-Trips
+### Testing Round-Trip Properties
+
+Verify serialization/deserialization or encoding/decoding:
 
 ```rust
-use proptest::prelude::*;
-
 proptest! {
     #[test]
-    fn encode_decode_roundtrip(original in any::<MyType>()) {
-        let encoded = encode(&original);
-        let decoded = decode(&encoded).unwrap();
-        prop_assert_eq!(original, decoded);
-    }
-}
-```
-
-### Testing Parser Correctness
-
-```rust
-use proptest::prelude::*;
-
-proptest! {
-    #[test]
-    fn parse_generated_format(
-        (year, month, day) in (0..10000u32, 1..13u32, 1..32u32)
-    ) {
-        let formatted = format!("{:04}-{:02}-{:02}", year, month, day);
-        let (y, m, d) = parse_date(&formatted).unwrap();
-        prop_assert_eq!((year, month, day), (y, m, d));
+    fn roundtrip_json(data in any::<MyData>()) {
+        let json = serde_json::to_string(&data)?;
+        let decoded: MyData = serde_json::from_str(&json)?;
+        prop_assert_eq!(data, decoded);
     }
 }
 ```
 
 ### Testing Invariants
 
-```rust
-use proptest::prelude::*;
+Verify properties that should always hold:
 
+```rust
 proptest! {
     #[test]
-    fn sorted_vec_stays_sorted(mut v in prop::collection::vec(0..1000i32, 0..100)) {
-        v.sort();
-
-        // Verify sorted invariant
-        for window in v.windows(2) {
-            prop_assert!(window[0] <= window[1]);
-        }
+    fn vec_push_increases_length(mut v in any::<Vec<i32>>(), x in any::<i32>()) {
+        let old_len = v.len();
+        v.push(x);
+        prop_assert_eq!(v.len(), old_len + 1);
+        prop_assert_eq!(v.last(), Some(&x));
     }
 }
 ```
 
-## Troubleshooting
+### Testing Equivalence
 
-### Too Many Rejections
-
-If you see "too many rejections" errors, you're filtering too aggressively. Replace `prop_filter` with `prop_map` or `prop_flat_map`:
+Verify two implementations produce the same result:
 
 ```rust
-// ❌ Bad: Many rejections
-(0..1000u32).prop_filter("even", |x| x % 2 == 0)
-
-// ✅ Good: Generate directly
-any::<u32>().prop_map(|x| x * 2)
+proptest! {
+    #[test]
+    fn optimized_matches_naive(input in any::<Vec<i32>>()) {
+        let result1 = naive_implementation(&input);
+        let result2 = optimized_implementation(&input);
+        prop_assert_eq!(result1, result2);
+    }
+}
 ```
 
-### Shrinking Not Finding Minimal Case
+### Testing Error Handling
 
-Ensure your strategies compose properly. Each layer should shrink independently. Use `prop_flat_map` when values depend on each other.
-
-### Performance Issues
-
-- Reduce the number of `cases` in config
-- Use simpler strategies when possible
-- Avoid excessive filtering
-- Consider using `prop::sample::select` for choosing from a fixed set
-
-## Additional Resources
-
-- [Proptest Book](https://altsysrq.github.io/proptest-book/)
-- [API Documentation](https://docs.rs/proptest/latest/proptest/)
-- [Understanding Strategies](https://altsysrq.github.io/proptest-book/proptest/tutorial/index.html)
-- [proptest-derive Error Index](https://altsysrq.github.io/proptest-book/proptest-derive/errors.html)
-- [Proptest vs QuickCheck](https://altsysrq.github.io/proptest-book/proptest/vs-quickcheck.html)
-
-## Examples Cheatsheet
+Verify errors occur when expected:
 
 ```rust
-// Basic types
-any::<i32>()
-0..100i32
-"[a-z]+"
-
-// Collections
-vec(any::<u8>(), 0..10)
-hash_set(0..100, 5)
-
-// Transform
-any::<i32>().prop_map(|x| x.abs())
-
-// Dependent
-vec(any::<i32>(), 1..10).prop_flat_map(|v| (Just(v.clone()), 0..v.len()))
-
-// Filter (avoid)
-(0..100).prop_filter("even", |x| x % 2 == 0)
-
-// Choose variants
-prop_oneof![0..10, 100..110, 1000..1010]
-
-// Fixed values
-Just(42)
-prop::option::of(Just("fixed"))
-
-// Derive
-#[derive(Arbitrary)]
-struct MyType { field: i32 }
+proptest! {
+    #[test]
+    fn negative_sqrt_fails(x in i32::MIN..0) {
+        prop_assert!(sqrt(x).is_err());
+    }
+}
 ```
+
+## Configuration
+
+### Test Case Count and Timeouts
+
+```rust
+proptest! {
+    #![proptest_config(ProptestConfig {
+        cases: 1000,  // Run 1000 test cases (default: 256)
+        timeout: 5000,  // Timeout after 5 seconds
+        fork: true,  // Run in subprocess (catches panics/infinite loops)
+        .. ProptestConfig::default()
+    })]
+
+    #[test]
+    fn expensive_test(x in 0..1000) {
+        // ...
+    }
+}
+```
+
+**Reference**: [Forking and timeouts](https://altsysrq.github.io/proptest-book/proptest/forking.html)
+
+### Failure Persistence
+
+Failed test cases are saved to `proptest-regressions/` directory:
+
+```bash
+# Add these to version control!
+git add proptest-regressions
+```
+
+This ensures failing cases are replayed on future test runs.
+
+**Reference**: [Failure persistence](https://altsysrq.github.io/proptest-book/proptest/failure-persistence.html)
+
+## Key Principles
+
+1. **Prefer transformation over filtering**: Use `prop_map` instead of `prop_filter` when possible
+2. **Express constraints in strategies**: Don't generate invalid data then filter it out
+3. **Composition is powerful**: Build complex strategies from simple ones
+4. **Use derive for custom types**: `#[derive(Arbitrary)]` handles the boilerplate
+5. **Shrinking is automatic**: Strategies know how to simplify failing inputs
+6. **Add regression tests**: Copy minimal failing inputs to traditional unit tests
+
+## Further Reading
+
+- [Proptest Book](https://altsysrq.github.io/proptest-book/) - Complete guide
+- [API Documentation](https://docs.rs/proptest/latest/proptest/) - Full API reference
+- [Strategy Trait](https://docs.rs/proptest/latest/proptest/strategy/trait.Strategy.html) - Core strategy methods
+- [Differences from QuickCheck](https://altsysrq.github.io/proptest-book/proptest/vs-quickcheck.html) - Why proptest is different
+- [Limitations](https://altsysrq.github.io/proptest-book/proptest/limitations.html) - When property testing isn't enough
