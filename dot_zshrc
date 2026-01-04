@@ -1,0 +1,80 @@
+autoload -Uz compinit && compinit
+
+alias ls='eza'
+alias find='fd'
+alias cat='bat -p'
+
+export PATH="/opt/homebrew/opt/go@1.24/bin:$PATH"
+
+export DOCKER_HOST="unix:///Users/luke/.colima/default/docker.sock"
+
+# Used for checking out files from another branch which have changed when
+# diffing compared to the current branch. Uses fzf to select a subset of these
+# changed files, which can facilitate a workflow of splitting a branch up for
+# review.
+fzf-git-diff-checkout-files() {
+    git rev-parse HEAD > /dev/null 2>&1 || return
+   
+    local source_branch
+    source_branch=$(fzf-git-branch $1)
+
+    git diff --name-only $source_branch | fzf -m --preview="git diff ..$source_branch --color=always -- {} | less -R" | while read -r file; do
+        if git show ${source_branch}:${file} >/dev/null 2>&1; then
+            echo "Checkout $file from $source_branch"
+            git checkout $source_branch -- "$file"
+        else
+            echo "Deleting $file"
+            git rm "$file" > /dev/null
+        fi
+    done
+}
+
+# Use fzf to select and return a local git branch. Branches are sorted by the
+# date of their most recent commit.
+fzf-git-branch() {
+    git rev-parse HEAD > /dev/null 2>&1 || return
+
+    local all
+    all=""
+    if [[ "$1" = "all" ]]; then
+        all="--all"
+    fi
+
+    git branch --color=always $all --sort=-committerdate |
+        grep -v HEAD |
+        fzf --height 50% --ansi --no-multi --preview-window right:65% \
+            --preview 'git log -n 50 --color=always --date=short --pretty="format:%C(auto)%cd %h%d %s" $(sed "s/.* //" <<< {})' |
+        sed "s/.* //"
+}
+
+# use fzf to checkout a git branch.
+fzf-git-checkout() {
+    git rev-parse HEAD > /dev/null 2>&1 || return
+
+    local branch
+    branch=$(fzf-git-branch $1)
+    if [[ "$branch" = "" ]]; then
+        echo "No branch selected."
+        return
+    fi
+
+    # If branch name starts with 'remotes/' then it is a remote branch. By
+    # using --track and a remote branch name, it is the same as:
+    # git checkout -b branchName --track origin/branchName
+    if [[ "$branch" = 'remotes/'* ]]; then
+        git checkout --track $branch
+    else
+        git checkout $branch;
+    fi
+}
+
+alias gb='fzf-git-branch'
+alias gco='fzf-git-checkout'
+
+eval "$(starship init zsh)"
+eval "$(zoxide init zsh)"
+eval "$(mcfly init zsh)"
+eval "$(just --completions zsh)"
+source <(COMPLETE=zsh jj)
+source <(COMPLETE=zsh offline-docs)
+. /opt/homebrew/opt/asdf/libexec/asdf.sh
